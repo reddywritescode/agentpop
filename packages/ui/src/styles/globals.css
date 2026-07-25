@@ -1,0 +1,66 @@
+/**
+ * AgentPop global stylesheet — the entry compiled to dist/styles.css.
+ * Order matters: tokens first (so utilities can reference the vars), then the
+ * Tailwind layers, then base element defaults.
+ */
+@import "./tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: var(--border-default);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--surface-canvas);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+  }
+
+  /* Consistent focus treatment across the system. */
+  :where(a, button, input, select, textarea, [role="button"], [tabindex]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  ::selection {
+    background-color: var(--accent-subtle-bg);
+    color: var(--accent-subtle-text);
+  }
+
+  /* Monospace numerals in tabular contexts (metrics, usage). */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Thin, unobtrusive scrollbars for dense surfaces. */
+  .ap-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  .ap-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .ap-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: var(--radius-pill);
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+}

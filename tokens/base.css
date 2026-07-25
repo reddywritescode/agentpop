@@ -1,0 +1,14 @@
+/* AgentPop base element defaults — ported from packages/ui globals.css (Tailwind layers removed). */
+html{-webkit-text-size-adjust:100%;font-feature-settings:var(--font-features);text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{margin:0;background-color:var(--surface-canvas);color:var(--text-primary);font-family:var(--font-sans);font-size:0.875rem;line-height:1.375rem}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:4px}
+:where(a,button,input,select,textarea,[role="button"],[tabindex]):focus-visible{outline:2px solid var(--ring);outline-offset:2px;border-radius:var(--radius-xs)}
+::selection{background-color:var(--accent-subtle-bg);color:var(--accent-subtle-text)}
+.tabular-nums{font-variant-numeric:tabular-nums}
+.as-icon--spin{animation:as-spin 1s linear infinite}
+@keyframes as-spin{to{transform:rotate(360deg)}}
+/* Thin, unobtrusive scrollbars for dense surfaces. */
+.as-scroll{scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+.as-scroll::-webkit-scrollbar{width:10px;height:10px}
+.as-scroll::-webkit-scrollbar-thumb{background-color:var(--border-strong);border-radius:var(--radius-pill);border:3px solid transparent;background-clip:content-box}

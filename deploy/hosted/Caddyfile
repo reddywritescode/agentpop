@@ -1,0 +1,63 @@
+{
+	email {$ACME_EMAIL}
+	admin off
+}
+
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+}
+
+(alpha_auth) {
+	basic_auth {
+		{$ALPHA_USER} {$ALPHA_PASSWORD_HASH}
+	}
+}
+
+agentpop.cloud, www.agentpop.cloud {
+	import security_headers
+	@private path /app* /admin* /v1/* /private/* /preview/*
+	respond @private 404
+	reverse_proxy web:80
+}
+
+app.agentpop.cloud {
+	import security_headers
+	import alpha_auth
+	@root path /
+	redir @root /app/overview 302
+	@admin path /admin* /private/*
+	respond @admin 404
+	reverse_proxy web:80
+}
+
+admin.agentpop.cloud {
+	import security_headers
+	import alpha_auth
+	@root path /
+	redir @root /admin/login 302
+	@customer path /app* /v1/*
+	respond @customer 404
+	reverse_proxy web:80
+}
+
+api.agentpop.cloud {
+	import security_headers
+	@private path /private/*
+	respond @private 404
+	reverse_proxy control-plane:8080
+}
+
+preview.agentpop.cloud {
+	import security_headers
+	@preview path /preview/*
+	handle @preview {
+		reverse_proxy control-plane:8080
+	}
+	respond 404
+}

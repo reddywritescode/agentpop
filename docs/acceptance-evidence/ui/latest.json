@@ -1,0 +1,481 @@
+{
+  "generatedAt": "2026-07-25T20:27:14.706Z",
+  "baseUrl": "http://127.0.0.1:8088",
+  "summary": {
+    "pass": 43,
+    "fail": 0
+  },
+  "results": [
+    {
+      "id": "UI-PUB-001",
+      "status": "PASS",
+      "surface": "/",
+      "detail": "Run untrusted and agent-generated code route rendered with 16 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-pub-001-run-untrusted-and-agent-generated-code.png",
+        "controls": 16
+      },
+      "verifiedAt": "2026-07-25T20:26:42.470Z"
+    },
+    {
+      "id": "UI-PUB-002",
+      "status": "PASS",
+      "surface": "/signin",
+      "detail": "Welcome back route rendered with 8 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-pub-002-welcome-back.png",
+        "controls": 8
+      },
+      "verifiedAt": "2026-07-25T20:26:43.005Z"
+    },
+    {
+      "id": "UI-PUB-003",
+      "status": "PASS",
+      "surface": "/signup",
+      "detail": "Create your account route rendered with 10 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-pub-003-create-your-account.png",
+        "controls": 10
+      },
+      "verifiedAt": "2026-07-25T20:26:43.530Z"
+    },
+    {
+      "id": "UI-OVR-001",
+      "status": "PASS",
+      "surface": "/app/overview",
+      "detail": "Overview route rendered with 24 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-ovr-001-overview.png",
+        "controls": 24
+      },
+      "verifiedAt": "2026-07-25T20:26:44.063Z"
+    },
+    {
+      "id": "UI-MKT-001",
+      "status": "PASS",
+      "surface": "/app/marketplace",
+      "detail": "Image marketplace route rendered with 63 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-mkt-001-image-marketplace.png",
+        "controls": 63
+      },
+      "verifiedAt": "2026-07-25T20:26:44.595Z"
+    },
+    {
+      "id": "UI-SBX-001",
+      "status": "PASS",
+      "surface": "/app/sandboxes",
+      "detail": "Sandboxes route rendered with 81 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-sbx-001-sandboxes.png",
+        "controls": 81
+      },
+      "verifiedAt": "2026-07-25T20:26:45.139Z"
+    },
+    {
+      "id": "UI-SBD-001",
+      "status": "PASS",
+      "surface": "/app/sandboxes/sb-3decc2653a8e0c45fb3e9a16",
+      "detail": "Sandboxes route rendered with 26 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-sbd-001-sandboxes.png",
+        "controls": 26
+      },
+      "verifiedAt": "2026-07-25T20:26:45.656Z"
+    },
+    {
+      "id": "UI-CON-001",
+      "status": "PASS",
+      "surface": "/app/connectors",
+      "detail": "Connectors route rendered with 1014 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-con-001-connectors.png",
+        "controls": 1014
+      },
+      "verifiedAt": "2026-07-25T20:26:47.836Z"
+    },
+    {
+      "id": "UI-DEV-001",
+      "status": "PASS",
+      "surface": "/app/developer",
+      "detail": "Developer route rendered with 26 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-dev-001-developer.png",
+        "controls": 26
+      },
+      "verifiedAt": "2026-07-25T20:26:48.399Z"
+    },
+    {
+      "id": "UI-SET-001",
+      "status": "PASS",
+      "surface": "/app/settings",
+      "detail": "Settings route rendered with 20 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-set-001-settings.png",
+        "controls": 20
+      },
+      "verifiedAt": "2026-07-25T20:26:48.922Z"
+    },
+    {
+      "id": "UI-COMPAT-AGENT",
+      "status": "PASS",
+      "surface": "/app/agents",
+      "detail": "Image marketplace route rendered with 42 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-compat-agent-image-marketplace.png",
+        "controls": 42
+      },
+      "verifiedAt": "2026-07-25T20:26:49.466Z"
+    },
+    {
+      "id": "UI-COMPAT-TEMPLATE",
+      "status": "PASS",
+      "surface": "/app/templates",
+      "detail": "Image marketplace route rendered with 39 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-compat-template-image-marketplace.png",
+        "controls": 39
+      },
+      "verifiedAt": "2026-07-25T20:26:50.019Z"
+    },
+    {
+      "id": "UI-MKT-FILTER",
+      "status": "PASS",
+      "surface": "marketplace",
+      "detail": "Agent filter updates the unified image marketplace",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-mkt-filter-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-mkt-filter-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:50.970Z"
+    },
+    {
+      "id": "UI-MKT-SEARCH",
+      "status": "PASS",
+      "surface": "marketplace",
+      "detail": "Search narrows the unified image marketplace without changing image kind",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-mkt-search-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-mkt-search-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:51.776Z"
+    },
+    {
+      "id": "UI-MKT-GENERATE",
+      "status": "PASS",
+      "surface": "marketplace",
+      "detail": "Prompt produces a reviewable allowlisted image before build",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-mkt-generate-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-mkt-generate-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:52.668Z"
+    },
+    {
+      "id": "UI-MKT-SOURCE",
+      "status": "PASS",
+      "surface": "marketplace",
+      "detail": "Curated image exposes portable source files and a fork action",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-mkt-source-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-mkt-source-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:53.549Z"
+    },
+    {
+      "id": "UI-MKT-DEPLOY",
+      "status": "PASS",
+      "surface": "marketplace",
+      "detail": "Image deploy exposes persistent/ephemeral lifecycle and optional write-only secrets",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-mkt-deploy-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-mkt-deploy-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:54.441Z"
+    },
+    {
+      "id": "UI-MKT-BLANK",
+      "status": "PASS",
+      "surface": "marketplace",
+      "detail": "Blank computer opens the same runtime creation sheet",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-mkt-blank-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-mkt-blank-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:55.329Z"
+    },
+    {
+      "id": "UI-SBX-NEW",
+      "status": "PASS",
+      "surface": "sandboxes",
+      "detail": "Create sandbox sheet opens with fixed subscription copy and cancels",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-sbx-new-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-sbx-new-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:56.214Z"
+    },
+    {
+      "id": "UI-SBX-TERMINAL",
+      "status": "PASS",
+      "surface": "sandbox terminal",
+      "detail": "Terminal button executes through the real runtime",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-sbx-terminal-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-sbx-terminal-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:57.039Z"
+    },
+    {
+      "id": "UI-SBX-LOGS",
+      "status": "PASS",
+      "surface": "sandbox detail tabs",
+      "detail": "Logs tab renders",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-sbx-logs-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-sbx-logs-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:57.889Z"
+    },
+    {
+      "id": "UI-SBX-FILES",
+      "status": "PASS",
+      "surface": "sandbox detail tabs",
+      "detail": "Files tab renders",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-sbx-files-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-sbx-files-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:58.743Z"
+    },
+    {
+      "id": "UI-SBX-METRICS",
+      "status": "PASS",
+      "surface": "sandbox detail tabs",
+      "detail": "Metrics tab renders",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-sbx-metrics-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-sbx-metrics-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:26:59.611Z"
+    },
+    {
+      "id": "UI-SBX-EVENTS",
+      "status": "PASS",
+      "surface": "sandbox detail tabs",
+      "detail": "Events tab renders",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-sbx-events-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-sbx-events-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:00.455Z"
+    },
+    {
+      "id": "UI-SBX-SETTINGS",
+      "status": "PASS",
+      "surface": "sandbox detail tabs",
+      "detail": "Settings tab renders",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-sbx-settings-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-sbx-settings-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:01.330Z"
+    },
+    {
+      "id": "UI-CON-TEST",
+      "status": "PASS",
+      "surface": "connectors",
+      "detail": "Connected provider exposes the real broker-path test dialog",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-con-test-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-con-test-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:02.757Z"
+    },
+    {
+      "id": "UI-DEV-KEY",
+      "status": "PASS",
+      "surface": "developer",
+      "detail": "Scoped API-key dialog opens and cancels",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-dev-key-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-dev-key-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:03.637Z"
+    },
+    {
+      "id": "UI-DEV-SDK-typescript",
+      "status": "PASS",
+      "surface": "developer SDK tabs",
+      "detail": "TypeScript SDK tab is selectable",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-dev-sdk-typescript-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-dev-sdk-typescript-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:04.487Z"
+    },
+    {
+      "id": "UI-DEV-SDK-python",
+      "status": "PASS",
+      "surface": "developer SDK tabs",
+      "detail": "Python SDK tab is selectable",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-dev-sdk-python-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-dev-sdk-python-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:05.357Z"
+    },
+    {
+      "id": "UI-DEV-SDK-go",
+      "status": "PASS",
+      "surface": "developer SDK tabs",
+      "detail": "Go SDK tab is selectable",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-dev-sdk-go-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-dev-sdk-go-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:06.224Z"
+    },
+    {
+      "id": "UI-DEV-SDK-cli",
+      "status": "PASS",
+      "surface": "developer SDK tabs",
+      "detail": "CLI SDK tab is selectable",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-dev-sdk-cli-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-dev-sdk-cli-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:07.068Z"
+    },
+    {
+      "id": "UI-SET-TAB-project",
+      "status": "PASS",
+      "surface": "settings tabs",
+      "detail": "Project settings tab is selectable",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-set-tab-project-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-set-tab-project-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:07.897Z"
+    },
+    {
+      "id": "UI-SET-TAB-members",
+      "status": "PASS",
+      "surface": "settings tabs",
+      "detail": "Members settings tab is selectable",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-set-tab-members-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-set-tab-members-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:08.738Z"
+    },
+    {
+      "id": "UI-SET-TAB-subscription",
+      "status": "PASS",
+      "surface": "settings tabs",
+      "detail": "Subscription settings tab is selectable",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-set-tab-subscription-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-set-tab-subscription-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:09.570Z"
+    },
+    {
+      "id": "UI-SET-TAB-quotas",
+      "status": "PASS",
+      "surface": "settings tabs",
+      "detail": "Quotas settings tab is selectable",
+      "evidence": {
+        "before": "docs/acceptance-evidence/ui/ui-set-tab-quotas-before.png",
+        "after": "docs/acceptance-evidence/ui/ui-set-tab-quotas-after.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:10.428Z"
+    },
+    {
+      "id": "UI-EXCLUSIONS",
+      "status": "PASS",
+      "surface": "customer navigation",
+      "detail": "Services, Applications, and credits are absent from the customer navigation",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-customer-navigation-exclusions.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:10.946Z"
+    },
+    {
+      "id": "UI-ADM-LOGIN",
+      "status": "PASS",
+      "surface": "/admin/login",
+      "detail": "Owner login reached the operator console",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-admin-login.png"
+      },
+      "verifiedAt": "2026-07-25T20:27:11.586Z"
+    },
+    {
+      "id": "UI-ADM-OVR",
+      "status": "PASS",
+      "surface": "/admin/overview",
+      "detail": "Operations overview route rendered with 8 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-adm-ovr-operations-overview.png",
+        "controls": 8
+      },
+      "verifiedAt": "2026-07-25T20:27:12.100Z"
+    },
+    {
+      "id": "UI-ADM-CP",
+      "status": "PASS",
+      "surface": "/admin/control-plane",
+      "detail": "Control plane route rendered with 7 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-adm-cp-control-plane.png",
+        "controls": 7
+      },
+      "verifiedAt": "2026-07-25T20:27:12.600Z"
+    },
+    {
+      "id": "UI-ADM-DP",
+      "status": "PASS",
+      "surface": "/admin/data-plane",
+      "detail": "Data plane route rendered with 8 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-adm-dp-data-plane.png",
+        "controls": 8
+      },
+      "verifiedAt": "2026-07-25T20:27:13.102Z"
+    },
+    {
+      "id": "UI-ADM-SBX",
+      "status": "PASS",
+      "surface": "/admin/sandboxes",
+      "detail": "Runtime inventory route rendered with 7 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-adm-sbx-runtime-inventory.png",
+        "controls": 7
+      },
+      "verifiedAt": "2026-07-25T20:27:13.637Z"
+    },
+    {
+      "id": "UI-ADM-AUD",
+      "status": "PASS",
+      "surface": "/admin/audit",
+      "detail": "Audit & operations route rendered with 8 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-adm-aud-audit-operations.png",
+        "controls": 8
+      },
+      "verifiedAt": "2026-07-25T20:27:14.184Z"
+    },
+    {
+      "id": "UI-ADM-SET",
+      "status": "PASS",
+      "surface": "/admin/settings",
+      "detail": "Private API configuration route rendered with 7 visible controls",
+      "evidence": {
+        "screenshot": "docs/acceptance-evidence/ui/ui-adm-set-private-api-configuration.png",
+        "controls": 7
+      },
+      "verifiedAt": "2026-07-25T20:27:14.705Z"
+    }
+  ]
+}

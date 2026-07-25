@@ -1,0 +1,11 @@
+apiVersion: agentpop.cloud/v1
+kind: Image
+metadata:
+  name: base-agent
+spec:
+  type: sandbox
+  defaultCommand: /bin/bash
+  lifecycle:
+    - persistent
+    - ephemeral
+  credentials: []

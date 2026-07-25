@@ -1,0 +1,228 @@
+<!-- @dsCard group="Dashboard" viewport="1440x900" name="Docs" subtitle="API reference, SDK/CLI/MCP quickstarts, and the open-source repo ecosystem" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs — AgentPop</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+body{margin:0;background:var(--surface-canvas);color:var(--text-primary);font-family:var(--font-sans)}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{color:var(--accent-hover);text-decoration:underline}
+.mark{width:24px;height:24px;border-radius:6px;background:var(--accent);color:var(--accent-fg);display:inline-flex;align-items:center;justify-content:center;font:600 11px/1 var(--font-sans);flex-shrink:0}
+.dtop{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--surface-canvas) 90%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:12px;padding:0 24px;height:54px}
+.dtop .wordmark{display:flex;align-items:center;gap:8px;font:600 14px/20px var(--font-sans);color:var(--text-primary)}
+.dtop .crumbsep{color:var(--text-tertiary);font:13px/18px var(--font-sans)}
+.layout{display:flex;max-width:1200px;margin:0 auto}
+.docnav{width:220px;flex-shrink:0;position:sticky;top:54px;align-self:flex-start;max-height:calc(100vh - 54px);overflow-y:auto;padding:24px 8px 40px 24px}
+.docnav .grp{font:600 11px/16px var(--font-sans);color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 6px 10px}
+.docnav .grp:first-child{margin-top:0}
+.docnav a{display:block;padding:5px 10px;border-radius:var(--radius-sm);font:400 13px/19px var(--font-sans);color:var(--text-secondary)}
+.docnav a:hover{background:var(--surface-2);color:var(--text-primary);text-decoration:none}
+.doc{flex:1;min-width:0;padding:32px 32px 80px;border-left:1px solid var(--border-subtle)}
+.doc h1{margin:0 0 6px;font:600 26px/34px var(--font-sans);letter-spacing:-0.02em}
+.doc .lead{margin:0 0 28px;font:14px/22px var(--font-sans);color:var(--text-secondary);max-width:640px;text-wrap:pretty}
+.doc h2{margin:44px 0 8px;padding-top:12px;font:600 18px/26px var(--font-sans);letter-spacing:-0.01em}
+.doc h3{margin:22px 0 8px;font:600 14px/20px var(--font-sans)}
+.doc p{margin:0 0 12px;font:13.5px/21px var(--font-sans);color:var(--text-secondary);max-width:640px;text-wrap:pretty}
+.doc .codebl{background:var(--code-bg);color:var(--code-fg);border-radius:var(--radius-lg);padding:14px 16px;font:12.5px/20px var(--font-mono);overflow-x:auto;position:relative;margin:0 0 14px}
+.doc .codebl .cmt{color:#8f8b83}
+.doc .codebl .g{color:#9fce8f}
+.doc .codebl .cpy{position:absolute;top:8px;right:8px;color:var(--code-fg);opacity:.7;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px}
+.doc .codebl .cpy:hover{opacity:1;background:rgba(255,255,255,.08)}
+.endp{display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-1);margin-bottom:6px;font:12.5px/18px var(--font-mono)}
+.endp .m{font:600 11px/16px var(--font-mono);padding:2px 7px;border-radius:5px;flex-shrink:0;min-width:38px;text-align:center}
+.endp .m.get{background:var(--info-bg);color:var(--info-fg);border:1px solid var(--info-border)}
+.endp .m.post{background:var(--success-bg);color:var(--success-fg);border:1px solid var(--success-border)}
+.endp .m.del{background:var(--danger-bg);color:var(--danger-fg);border:1px solid var(--danger-border)}
+.endp .m.patch{background:var(--warning-bg);color:var(--warning-fg);border:1px solid var(--warning-border)}
+.endp .d{font:12px/17px var(--font-sans);color:var(--text-tertiary);margin-left:auto;text-align:right}
+.repogrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.repo{background:var(--surface-1);border:1px solid var(--border-default);border-radius:var(--radius-lg);box-shadow:var(--shadow-xs);padding:14px 16px;cursor:pointer;transition:border-color .15s}
+.repo:hover{border-color:var(--border-strong)}
+.repo .rn{display:flex;align-items:center;gap:8px;font:600 13.5px/19px var(--font-mono);color:var(--accent-text)}
+.repo .rd{margin:5px 0 10px;font:12.5px/18px var(--font-sans);color:var(--text-secondary);text-wrap:pretty}
+.repo .rm{display:flex;gap:14px;font:11.5px/16px var(--font-sans);color:var(--text-tertiary);align-items:center}
+.repo .lang{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--border-subtle);margin-bottom:14px}
+.tab{padding:0 2px 9px;font:400 13.5px/20px var(--font-sans);color:var(--text-secondary);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:var(--text-primary);font-weight:500;border-bottom-color:var(--text-primary)}
+.note{display:flex;gap:10px;align-items:flex-start;background:var(--accent-subtle-bg);border:1px solid var(--accent-subtle-border);border-radius:var(--radius-lg);padding:12px 14px;font:13px/19px var(--font-sans);color:var(--accent-subtle-text);margin:0 0 14px;max-width:640px}
+@media (max-width:900px){.docnav{display:none}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Button, Icon, Badge } = window.AgentPopDesignSystem_47afa4;
+
+function Code({ lines }) {
+  const text = lines.map((l) => (typeof l === "string" ? l : l.t)).join("\n");
+  return (
+    <div className="codebl">
+      <button type="button" className="cpy" aria-label="Copy" onClick={() => { try { navigator.clipboard.writeText(text); } catch (e) {} }}><Icon name="copy" size={14} /></button>
+      {lines.map((l, i) => typeof l === "string" ? <div key={i}>{l || "\u00a0"}</div> : <div key={i}>{l.t} {l.c ? <span className="cmt"># {l.c}</span> : null}</div>)}
+    </div>
+  );
+}
+
+const ENDPOINTS = [
+  ["POST", "post", "/v1/sandboxes", "create (Idempotency-Key)"],
+  ["GET", "get", "/v1/sandboxes", "list"],
+  ["GET", "get", "/v1/sandboxes/{id}", "get"],
+  ["PATCH", "patch", "/v1/sandboxes/{id}", "update shape"],
+  ["POST", "post", "/v1/sandboxes/{id}:pause", "async lifecycle op"],
+  ["POST", "post", "/v1/sandboxes/{id}:resume", "async lifecycle op"],
+  ["POST", "post", "/v1/sandboxes/{id}:fork", "clone disk + policy"],
+  ["POST", "post", "/v1/sandboxes/{id}/exec", "run a command"],
+  ["GET", "get", "/v1/sandboxes/{id}/shell", "WebSocket terminal"],
+  ["GET", "get", "/v1/sandboxes/{id}/files", "list / download"],
+  ["POST", "post", "/v1/sandboxes/{id}/ports", "expose preview URL"],
+  ["DELETE", "del", "/v1/sandboxes/{id}", "destroy"],
+];
+const MORE = ["/v1/templates", "/v1/networks", "/v1/storages", "/v1/agents", "/v1/connectors + /connections + /grants", "/v1/webhooks", "/v1/audit-events", "/v1/api-keys", "/v1/usage", "/v1/quotas"];
+
+const REPOS = [
+  { n: "agentpop", d: "The platform: API, scheduler, host agent, guest agent, Firecracker lifecycle. Apache-2.0.", lang: "Go", c: "#00ADD8", stars: "2.1k", lic: "Apache-2.0" },
+  { n: "agentpop-sandbox-sdk", d: "TypeScript SDK — generated from OpenAPI 3.1 with an ergonomic wrapper.", lang: "TypeScript", c: "#3178c6", stars: "184", lic: "MIT" },
+  { n: "agentpop-python", d: "Python SDK — sync + async clients, generated core, handwritten ergonomics.", lang: "Python", c: "#3572A5", stars: "142", lic: "MIT" },
+  { n: "agentpop-cli", d: "agentpop — the Go CLI: login, sandbox create/list/exec/pause/resume/fork/destroy.", lang: "Go", c: "#00ADD8", stars: "96", lic: "Apache-2.0" },
+  { n: "agentpop-mcp", d: "MCP server: sandbox, file, port, and agent tools for Claude and any MCP client.", lang: "Go", c: "#00ADD8", stars: "77", lic: "Apache-2.0" },
+  { n: "agentpop-claude-plugins", d: "Claude Code plugin pack — slash commands and hooks for sandbox-backed dev loops.", lang: "Shell", c: "#89e051", stars: "31", lic: "MIT" },
+  { n: "agentpop-ghar", d: "Ephemeral GitHub Actions self-hosted runners — one throwaway microVM per job.", lang: "TypeScript", c: "#3178c6", stars: "58", lic: "MIT" },
+  { n: "homebrew-agentpop", d: "Homebrew tap for the agentpop CLI.", lang: "Ruby", c: "#701516", stars: "12", lic: "MIT" },
+  { n: "agentpop-agent-template", d: "OpenClaw-compatible reference agent template — fork it to ship your own.", lang: "TypeScript", c: "#3178c6", stars: "44", lic: "MIT" },
+];
+
+function Docs() {
+  const [sdk, setSdk] = React.useState("TypeScript");
+  const sdkTabs = {
+    TypeScript: [
+      { t: "npm install @agentpop/sdk", c: "" }, "",
+      'import { AgentPop } from "@agentpop/sdk";', "",
+      "const agentpop = new AgentPop({ apiKey: process.env.AGENTPOP_API_KEY });", "",
+      { t: 'const sb = await agentpop.sandboxes.create({', c: "202 queued → poll or await" },
+      '  size: "s-1vcpu-2gb", image: "devbox:1",', '  idempotencyKey: crypto.randomUUID(),', "});", "",
+      { t: 'await sb.waitUntil("running");', c: "cached boot p95 < 2 s" },
+      { t: 'const r = await sb.exec("python3 untrusted.py");', c: "streams over WebSocket" },
+      "console.log(r.stdout);", "",
+      { t: 'const url = await sb.ports.expose(8080, { mode: "public" });', c: "HTTPS preview" },
+      "await sb.pause();", "await sb.destroy();",
+    ],
+    Python: [
+      { t: "pip install agentpop", c: "" }, "",
+      "from agentpop import AgentPop", "",
+      "agentpop = AgentPop(api_key=os.environ[\"AGENTPOP_API_KEY\"])", "",
+      "sb = agentpop.sandboxes.create(size=\"s-1vcpu-2gb\", image=\"devbox:1\")",
+      "sb.wait_until(\"running\")", "",
+      { t: "result = sb.exec(\"python3 untrusted.py\")", c: "sync; .aio for asyncio" },
+      "print(result.stdout)", "",
+      "url = sb.ports.expose(8080, mode=\"public\")",
+      "sb.pause(); sb.destroy()",
+    ],
+  };
+  return (
+    <React.Fragment>
+      <header className="dtop">
+        <a className="wordmark" href="home.html"><span className="mark">P</span>AgentPop</a>
+        <span className="crumbsep">/</span>
+        <span style={{ font: "500 13.5px/20px var(--font-sans)" }}>Docs</span>
+        <span style={{ flex: 1 }}></span>
+        <Button variant="ghost" size="sm" leadingIcon={<Icon name="github" />} onClick={() => { location.hash = "opensource"; }}>GitHub</Button>
+        <Button variant="secondary" size="sm" onClick={() => { location.href = "auth.html?mode=signin"; }}>Sign in</Button>
+        <Button size="sm" onClick={() => { location.href = "index.html"; }}>Open dashboard</Button>
+      </header>
+      <div className="layout">
+        <nav className="docnav">
+          <div className="grp">Start</div>
+          <a href="#quickstart">Quickstart</a>
+          <a href="#auth">Authentication</a>
+          <div className="grp">API reference</div>
+          <a href="#api">Sandboxes API</a>
+          <a href="#resources">Other resources</a>
+          <a href="#webhooks">Webhooks</a>
+          <div className="grp">Clients</div>
+          <a href="#sdks">SDKs</a>
+          <a href="#cli">CLI</a>
+          <a href="#mcp">MCP server</a>
+          <div className="grp">Ecosystem</div>
+          <a href="#opensource">Open-source repos</a>
+          <a href="#selfhost">Self-hosting</a>
+        </nav>
+        <main className="doc">
+          <h1>Documentation</h1>
+          <p className="lead">Everything speaks one OpenAPI 3.1 contract: the dashboard, the SDKs, the CLI, and the MCP server are all clients of the same REST + WebSocket API.</p>
+
+          <h2 id="quickstart">Quickstart</h2>
+          <p>Create a key in <a href="index.html">Dashboard → Developer</a>, export it, and boot your first microVM:</p>
+          <Code lines={[{ t: "export AGENTPOP_API_KEY=pop_…", c: "scoped, shown once" }, { t: "curl -X POST https://api.agentpop.cloud/v1/sandboxes \\", c: "" }, '  -H "Authorization: Bearer $AGENTPOP_API_KEY" \\', '  -H "Idempotency-Key: $(uuidgen)" \\', '  -d \'{"size":"s-1vcpu-2gb","image":"devbox:1"}\'', { t: "→ 202 { id: \"sb-01ky…\", status: \"queued\" }", c: "then sandbox.running webhook" }]} />
+
+          <h2 id="auth">Authentication</h2>
+          <p>Bearer API keys, hashed at rest, project-scoped: <span className="mono" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5 }}>sandbox:write · sandbox:exec · connector:invoke · audit:read</span>. Agents inside VMs never get API keys — they receive short-lived workload tokens bound to one sandbox and generation.</p>
+
+          <h2 id="api">Sandboxes API</h2>
+          <p>Mutations accept an <b>Idempotency-Key</b>; lifecycle operations are async and return an operation resource. States: queued → provisioning → running → (pausing ↔ paused) → deleting → deleted | failed.</p>
+          <div style={{ margin: "14px 0 8px" }}>
+            {ENDPOINTS.map((e) => (
+              <div className="endp" key={e[2] + e[0]}><span className={"m " + e[1]}>{e[0]}</span><span>{e[2]}</span><span className="d">{e[3]}</span></div>
+            ))}
+          </div>
+          <h3 id="resources">Other resources</h3>
+          <p>{MORE.join(" · ")}</p>
+
+          <h2 id="webhooks">Webhooks</h2>
+          <p>HMAC-signed deliveries with exponential-backoff retries. Verify before trusting:</p>
+          <Code lines={['import { verifyWebhook } from "@agentpop/sdk";', "", 'const ok = verifyWebhook(rawBody, req.headers["x-agentpop-signature"],', "  process.env.AGENTPOP_WEBHOOK_SECRET);", { t: "if (!ok) return res.status(401).end();", c: "HMAC-SHA256(ts + '.' + body), 5 min tolerance" }]} />
+
+          <h2 id="sdks">SDKs</h2>
+          <div className="tabs">
+            {Object.keys(sdkTabs).map((s) => <button key={s} className={"tab" + (sdk === s ? " active" : "")} onClick={() => setSdk(s)}>{s}</button>)}
+          </div>
+          <Code lines={sdkTabs[sdk]} />
+          <p>Low-level clients are generated from the OpenAPI spec; the ergonomic layer (<span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5 }}>waitUntil, exec, ports</span>) is handwritten and thin.</p>
+
+          <h2 id="cli">CLI</h2>
+          <Code lines={[{ t: "brew install agentpop/tap/agentpop", c: "or curl -fsSL agentpop.cloud/install | sh" }, "", { t: "agentpop login", c: "browser OAuth" }, "agentpop sandbox create --size s-1vcpu-2gb --image devbox:1", "agentpop sandbox list --status running", "agentpop exec sb-01ky47 -- python3 train.py", "agentpop shell sb-01ky47", "agentpop ports expose sb-01ky47 8080 --mode public", "agentpop sandbox pause sb-01ky47 && agentpop sandbox resume sb-01ky47", "agentpop sandbox fork sb-01ky47", "agentpop sandbox destroy sb-01ky47"]} />
+
+          <h2 id="mcp">MCP server</h2>
+          <div className="note"><Icon name="bot" size={15} style={{ flexShrink: 0, marginTop: 2 }} />Tools map 1:1 to the REST API and inherit your key's scopes. Every invocation lands in the audit log.</div>
+          <Code lines={[{ t: "claude mcp add agentpop \\", c: "Claude Code" }, "  --env AGENTPOP_API_KEY=pop_… \\", "  -- npx -y @agentpop/mcp"]} />
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", margin: "0 0 14px" }}>
+            {["sandbox_create", "sandbox_exec", "sandbox_shell", "file_put", "file_get", "port_expose", "sandbox_pause", "sandbox_resume", "sandbox_fork", "sandbox_destroy", "template_list", "agent_deploy", "agent_logs"].map((t) => <Badge key={t} tone="outline" size="sm"><span style={{ fontFamily: "var(--font-mono)" }}>{t}</span></Badge>)}
+          </div>
+
+          <h2 id="opensource">Open-source repos</h2>
+          <p>The whole ecosystem mirrors what you'd expect from a serious platform org — core, SDKs, CLI, MCP, plugins, runners, tap, and a reference agent template:</p>
+          <div className="repogrid">
+            {REPOS.map((r) => (
+              <div className="repo" key={r.n} role="link" tabIndex={0}>
+                <div className="rn"><Icon name="book-marked" size={14} />{r.n}<Badge tone="outline" size="sm">Public</Badge></div>
+                <div className="rd">{r.d}</div>
+                <div className="rm">
+                  <span><span className="lang" style={{ background: r.c }}></span>{r.lang}</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Icon name="star" size={12} />{r.stars}</span>
+                  <span>{r.lic}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h2 id="selfhost">Self-hosting</h2>
+          <Code lines={[{ t: "git clone github.com/reddywritescode/agentpop && cd agentpop", c: "" }, { t: "docker compose up -d", c: "control plane: api, scheduler, worker, broker, gateway" }, { t: "agentpop host install --gateway https://localhost:8080", c: "one Ubuntu KVM host to start" }]} />
+          <p>Helm and Terraform reference deployments live in <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5 }}>deploy/</span>. The hosted cloud runs the same core.</p>
+          <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+            <Button leadingIcon={<Icon name="box" />} onClick={() => { location.href = "auth.html?mode=signup"; }}>Create a sandbox</Button>
+            <Button variant="secondary" leadingIcon={<Icon name="layout-dashboard" />} onClick={() => { location.href = "index.html"; }}>Open dashboard</Button>
+          </div>
+        </main>
+      </div>
+    </React.Fragment>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Docs />);
+</script>
+</body></html>

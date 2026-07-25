@@ -1,0 +1,176 @@
+/**
+ * AgentPop design tokens.
+ *
+ * Semantic, theme-aware CSS custom properties. Light is the default (`:root`);
+ * `.dark` on any ancestor re-derives the same tokens for dark mode.
+ *
+ * Rules of the system:
+ *  - Consume tokens, never raw hex. Tailwind maps every one of these to a
+ *    utility (see tailwind-preset.ts): `bg-surface-1`, `text-secondary`,
+ *    `border-default`, `bg-accent`, `text-success-fg`, …
+ *  - Status is never color alone — a success/warning/danger surface always
+ *    ships with an icon or text label in the component.
+ *  - Radii are 12–16px by default; spacing follows an 8px rhythm.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ---- Surfaces (warm off-white canvas, layered upward) ---- */
+  --surface-canvas: #faf9f7;
+  --surface-1: #ffffff;
+  --surface-2: #f5f3f0;
+  --surface-3: #efece7;
+  --surface-inset: #f2f0ec;
+  --surface-overlay: #ffffff;
+
+  /* ---- Text (warm near-black) ---- */
+  --text-primary: #1a1a18;
+  --text-secondary: #57544e;
+  --text-tertiary: #8a867e;
+  --text-disabled: #b7b3aa;
+  --text-inverse: #faf9f7;
+
+  /* ---- Borders ---- */
+  --border-subtle: #eceae5;
+  --border-default: #e0ddd6;
+  --border-strong: #cdc9c0;
+  --border-inverse: #38352f;
+
+  /* ---- Brand accent (cobalt indigo) ---- */
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-active: #3730a3;
+  --accent-fg: #ffffff;
+  --accent-text: #4338ca; /* accent as text/link on light surfaces (AA) */
+  --accent-subtle-bg: #eef0fd;
+  --accent-subtle-border: #d9dcfb;
+  --accent-subtle-text: #3730a3;
+
+  /* ---- Status: success ---- */
+  --success-fg: #166534;
+  --success-bg: #e8f5ec;
+  --success-border: #c4e6cf;
+  --success-solid: #16a34a;
+
+  /* ---- Status: warning ---- */
+  --warning-fg: #92610a;
+  --warning-bg: #fdf3e0;
+  --warning-border: #f4e0b8;
+  --warning-solid: #d97706;
+
+  /* ---- Status: danger ---- */
+  --danger-fg: #b42318;
+  --danger-bg: #fdeceb;
+  --danger-border: #f6d4d1;
+  --danger-solid: #dc2626;
+  --danger-hover: #b42318;
+
+  /* ---- Status: info ---- */
+  --info-fg: #175cd3;
+  --info-bg: #eaf1fd;
+  --info-border: #cfe0fb;
+  --info-solid: #2563eb;
+
+  /* ---- Status: neutral ---- */
+  --neutral-fg: #57544e;
+  --neutral-bg: #f2f0ec;
+  --neutral-border: #e0ddd6;
+  --neutral-solid: #6b675f;
+
+  /* ---- Interaction ---- */
+  --ring: #4f46e5;
+  --scrim: rgba(26, 25, 22, 0.45);
+  --code-bg: #1e1d1b;
+  --code-fg: #e9e6df;
+
+  /* ---- Radii (12–16px core) ---- */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-pill: 9999px;
+
+  /* ---- Elevation (warm, restrained) ---- */
+  --shadow-xs: 0 1px 2px rgba(26, 25, 22, 0.05);
+  --shadow-sm: 0 1px 3px rgba(26, 25, 22, 0.08), 0 1px 2px rgba(26, 25, 22, 0.04);
+  --shadow-md: 0 4px 12px rgba(26, 25, 22, 0.08), 0 2px 4px rgba(26, 25, 22, 0.04);
+  --shadow-lg: 0 12px 32px rgba(26, 25, 22, 0.12), 0 4px 8px rgba(26, 25, 22, 0.05);
+  --shadow-overlay: 0 24px 60px rgba(26, 25, 22, 0.18), 0 8px 16px rgba(26, 25, 22, 0.08);
+
+  /* ---- Type ---- */
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace,
+    "SFMono-Regular", "Menlo", "Consolas", monospace;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --surface-canvas: #17161a;
+  --surface-1: #201f24;
+  --surface-2: #2a282e;
+  --surface-3: #333038;
+  --surface-inset: #1b1a1f;
+  --surface-overlay: #26242b;
+
+  --text-primary: #f5f3ef;
+  --text-secondary: #b3afa7;
+  --text-tertiary: #837f77;
+  --text-disabled: #5c584f;
+  --text-inverse: #17161a;
+
+  --border-subtle: #2a2830;
+  --border-default: #383540;
+  --border-strong: #4b4753;
+  --border-inverse: #e0ddd6;
+
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-active: #a5b4fc;
+  --accent-fg: #12111c;
+  --accent-text: #a5b4fc;
+  --accent-subtle-bg: #23233a;
+  --accent-subtle-border: #383862;
+  --accent-subtle-text: #c7cbff;
+
+  --success-fg: #79dc9f;
+  --success-bg: #14271c;
+  --success-border: #245536;
+  --success-solid: #22c55e;
+
+  --warning-fg: #f5c977;
+  --warning-bg: #291f10;
+  --warning-border: #5a4718;
+  --warning-solid: #f59e0b;
+
+  --danger-fg: #f7a19a;
+  --danger-bg: #2a1614;
+  --danger-border: #5c2b26;
+  --danger-solid: #ef4444;
+  --danger-hover: #f7a19a;
+
+  --info-fg: #8ab4f8;
+  --info-bg: #141f30;
+  --info-border: #284067;
+  --info-solid: #3b82f6;
+
+  --neutral-fg: #b3afa7;
+  --neutral-bg: #26242b;
+  --neutral-border: #383540;
+  --neutral-solid: #837f77;
+
+  --ring: #818cf8;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --code-bg: #0f0e12;
+  --code-fg: #e2dfd8;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-overlay: 0 24px 60px rgba(0, 0, 0, 0.7), 0 8px 16px rgba(0, 0, 0, 0.5);
+}

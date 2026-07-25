@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["react", "react-dom"]
+  },
+  "include": ["src", "tailwind-preset.ts", "*.stories.tsx"],
+  "exclude": ["node_modules", "dist"]
+}

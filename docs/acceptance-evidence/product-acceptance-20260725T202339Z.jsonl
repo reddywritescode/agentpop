@@ -1,0 +1,15 @@
+{"id":"WEB-001","status":"PASS","surface":"public web","detail":"Marketing shell responds","verifiedAt":"2026-07-25T20:23:39Z"}
+{"id":"WEB-002","status":"PASS","surface":"public web","detail":"Sign-in route responds through SPA fallback","verifiedAt":"2026-07-25T20:23:40Z"}
+{"id":"WEB-003","status":"PASS","surface":"customer web","detail":"Dashboard route responds through SPA fallback","verifiedAt":"2026-07-25T20:23:40Z"}
+{"id":"WEB-004","status":"PASS","surface":"operator web","detail":"Admin login route responds through SPA fallback","verifiedAt":"2026-07-25T20:23:40Z"}
+{"id":"API-001","status":"PASS","surface":"public API","detail":"Public health endpoint is healthy without exposing fleet internals","verifiedAt":"2026-07-25T20:23:40Z"}
+{"id":"API-002","status":"PASS","surface":"public API","detail":"Catalog publishes sizes, events, roles, and scopes","verifiedAt":"2026-07-25T20:23:40Z"}
+{"id":"API-003","status":"PASS","surface":"control plane","detail":"Control-plane status includes a registered host","verifiedAt":"2026-07-25T20:23:40Z"}
+{"id":"API-004","status":"PASS","surface":"data plane","detail":"Data-plane host inventory is healthy","verifiedAt":"2026-07-25T20:23:41Z"}
+{"id":"API-005","status":"PASS","surface":"health UI","detail":"Platform health exposes control-plane and host capacity","verifiedAt":"2026-07-25T20:23:41Z"}
+{"id":"IMG-001","status":"PASS","surface":"image marketplace","detail":"Canonical catalog returns both agent and sandbox images","verifiedAt":"2026-07-25T20:23:41Z"}
+{"id":"IMG-002","status":"PASS","surface":"image source","detail":"Image API exposes portable Dockerfile, manifest, README, lifecycle, and optional credentials","verifiedAt":"2026-07-25T20:23:41Z"}
+{"id":"IMG-003","status":"FAIL","surface":"image generator","detail":"Prompt generation is allowlisted and never copies shell injection text","verifiedAt":"2026-07-25T20:23:41Z"}
+{"id":"IMG-004","status":"PASS","surface":"image build","detail":"Base agent source built into a managed immutable image","verifiedAt":"2026-07-25T20:23:41Z"}
+{"id":"IMG-005","status":"PASS","surface":"image deploy","detail":"Image deployed without a model key using the selected ephemeral lifecycle","verifiedAt":"2026-07-25T20:23:43Z"}
+{"id":"IMG-006","status":"PASS","surface":"sandbox secrets","detail":"Model key can be added after deployment and is returned by name only","verifiedAt":"2026-07-25T20:23:43Z"}

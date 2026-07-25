@@ -1,0 +1,11 @@
+{"id":"WEB-001","status":"PASS","surface":"public web","detail":"Marketing shell responds","verifiedAt":"2026-07-23T23:21:30Z"}
+{"id":"WEB-002","status":"PASS","surface":"public web","detail":"Sign-in route responds through SPA fallback","verifiedAt":"2026-07-23T23:21:30Z"}
+{"id":"WEB-003","status":"PASS","surface":"customer web","detail":"Dashboard route responds through SPA fallback","verifiedAt":"2026-07-23T23:21:30Z"}
+{"id":"WEB-004","status":"PASS","surface":"operator web","detail":"Admin login route responds through SPA fallback","verifiedAt":"2026-07-23T23:21:30Z"}
+{"id":"API-001","status":"PASS","surface":"public API","detail":"Health endpoint reports a healthy control/data plane","verifiedAt":"2026-07-23T23:21:30Z"}
+{"id":"API-002","status":"PASS","surface":"public API","detail":"Catalog publishes sizes, events, roles, and scopes","verifiedAt":"2026-07-23T23:21:30Z"}
+{"id":"API-003","status":"PASS","surface":"control plane","detail":"Control-plane status includes a registered host","verifiedAt":"2026-07-23T23:21:30Z"}
+{"id":"API-004","status":"PASS","surface":"data plane","detail":"Data-plane host inventory is healthy","verifiedAt":"2026-07-23T23:21:30Z"}
+{"id":"API-005","status":"PASS","surface":"health UI","detail":"Platform health exposes control-plane and host capacity","verifiedAt":"2026-07-23T23:21:30Z"}
+{"id":"SBX-001","status":"PASS","surface":"sandboxes","detail":"Created isolated sandbox sb-75c9914bbb9e6e34da052946","verifiedAt":"2026-07-23T23:21:31Z"}
+{"id":"SBX-002","status":"PASS","surface":"sandboxes","detail":"Idempotency replays the original sandbox","verifiedAt":"2026-07-23T23:21:31Z"}

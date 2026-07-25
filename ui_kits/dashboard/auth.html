@@ -1,0 +1,92 @@
+<!-- @dsCard group="Dashboard" viewport="1440x900" name="Sign in / Sign up" subtitle="Auth flow: OAuth or email → dashboard; toggles between sign-in and create-account" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in — AgentPop</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+body{margin:0;background:var(--surface-canvas);color:var(--text-primary);font-family:var(--font-sans);min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{color:var(--accent-hover);text-decoration:underline}
+.mark{width:26px;height:26px;border-radius:7px;background:var(--accent);color:var(--accent-fg);display:inline-flex;align-items:center;justify-content:center;font:600 12px/1 var(--font-sans)}
+.authtop{display:flex;align-items:center;gap:9px;padding:20px 28px;font:600 15px/20px var(--font-sans)}
+.authwrap{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{width:400px;background:var(--surface-1);border:1px solid var(--border-default);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:32px}
+.card h1{margin:0;font:600 20px/28px var(--font-sans);letter-spacing:-0.01em}
+.card .sub{margin:4px 0 22px;font:13px/19px var(--font-sans);color:var(--text-secondary)}
+.field{margin-bottom:14px}
+.field label{display:block;font:500 13px/18px var(--font-sans);margin-bottom:6px}
+.div{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--text-tertiary);font:11.5px/16px var(--font-sans);text-transform:uppercase;letter-spacing:.06em}
+.div::before,.div::after{content:"";flex:1;height:1px;background:var(--border-subtle)}
+.swap{margin-top:20px;text-align:center;font:13px/18px var(--font-sans);color:var(--text-secondary)}
+.selfhost{margin-top:16px;display:flex;gap:9px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:11px 13px;font:12px/17px var(--font-sans);color:var(--text-secondary)}
+.authfoot{padding:20px 28px;display:flex;gap:16px;justify-content:center}
+.authfoot a{font:12px/17px var(--font-sans);color:var(--text-tertiary)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Button, Icon, Input } = window.AgentPopDesignSystem_47afa4;
+function Auth() {
+  const [mode, setMode] = React.useState((new URLSearchParams(location.search).get("mode")) === "signup" ? "signup" : "signin");
+  const [email, setEmail] = React.useState("");
+  const [pw, setPw] = React.useState("");
+  const [org, setOrg] = React.useState("");
+  const [busy, setBusy] = React.useState(false);
+  const signup = mode === "signup";
+  const emailOk = /^\S+@\S+\.\S+$/.test(email);
+  const ready = emailOk && pw.length >= 8 && (!signup || org.length > 0);
+  const go = () => { setBusy(true); setTimeout(() => { location.href = "index.html"; }, 900); };
+  return (
+    <React.Fragment>
+      <a className="authtop" href="home.html" style={{ color: "var(--text-primary)", textDecoration: "none" }}><span className="mark">P</span>AgentPop</a>
+      <main className="authwrap">
+        <div className="card">
+          <h1>{signup ? "Create your account" : "Welcome back"}</h1>
+          <div className="sub">{signup ? "Free credits to start — no card required." : "Sign in to acme-labs and friends."}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <Button variant="secondary" leadingIcon={<Icon name="github" />} loading={busy} onClick={go}>Continue with GitHub</Button>
+            <Button variant="secondary" leadingIcon={<Icon name="chrome" />} loading={busy} onClick={go}>Continue with Google</Button>
+          </div>
+          <div className="div">or with email</div>
+          {signup ? (
+            <div className="field">
+              <label>Organization</label>
+              <Input placeholder="acme-labs" value={org} onChange={(e) => setOrg(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} />
+            </div>
+          ) : null}
+          <div className="field">
+            <label>Email</label>
+            <Input type="email" placeholder="you@company.dev" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <div className="field">
+            <label style={{ display: "flex" }}>Password<span style={{ flex: 1 }}></span>{!signup ? <a href="auth.html" onClick={(e) => e.preventDefault()} style={{ font: "400 12px/18px var(--font-sans)" }}>Forgot?</a> : null}</label>
+            <Input type="password" placeholder={signup ? "At least 8 characters" : "••••••••••"} value={pw} onChange={(e) => setPw(e.target.value)} />
+          </div>
+          <Button style={{ width: "100%", marginTop: 6 }} disabled={!ready} loading={busy} trailingIcon={<Icon name="arrow-right" />} onClick={go}>{busy ? "Signing in…" : signup ? "Create account" : "Sign in"}</Button>
+          {signup ? <div style={{ font: "11.5px/16px var(--font-sans)", color: "var(--text-tertiary)", marginTop: 10 }}>By continuing you agree to the <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a>.</div> : null}
+          <div className="swap">
+            {signup ? "Already have an account? " : "New to AgentPop? "}
+            <button className="as-linklike" style={{ background: "none", border: "none", padding: 0, font: "500 13px/18px var(--font-sans)", color: "var(--accent-text)", cursor: "pointer" }} onClick={() => setMode(signup ? "signin" : "signup")}>{signup ? "Sign in" : "Create an account"}</button>
+          </div>
+          <div className="selfhost"><Icon name="server" size={15} style={{ flexShrink: 0, marginTop: 1 }} />Self-hosting? Point the CLI at your control plane: <span style={{ fontFamily: "var(--font-mono)" }}>AGENTPOP_API_URL=https://your-host agentpop sandbox list</span></div>
+        </div>
+      </main>
+      <footer className="authfoot">
+        <a href="home.html">← Back to site</a>
+        <a href="#terms">Terms</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#status">Status</a>
+      </footer>
+    </React.Fragment>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Auth />);
+</script>
+</body></html>

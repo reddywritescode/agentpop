@@ -1,0 +1,62 @@
+{
+	email admin@agentpop.cloud
+	admin off
+}
+
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+}
+
+agentpop.cloud, www.agentpop.cloud {
+	import security_headers
+	@private path /app* /admin* /v1/* /private/* /preview/*
+	respond @private 404
+	reverse_proxy 127.0.0.1:8088
+}
+
+app.agentpop.cloud {
+	import security_headers
+	@root path /
+	redir @root /app/overview 302
+	@admin path /admin* /private/*
+	respond @admin 404
+	reverse_proxy 127.0.0.1:8088
+}
+
+admin.agentpop.cloud {
+	import security_headers
+	@root path /
+	redir @root /admin/login 302
+	@customer path /app* /v1/*
+	respond @customer 404
+	reverse_proxy 127.0.0.1:8088
+}
+
+api.agentpop.cloud {
+	import security_headers
+	@private path /private/*
+	respond @private 404
+	reverse_proxy 127.0.0.1:8080
+}
+
+preview.agentpop.cloud {
+	import security_headers
+	@preview path /preview/*
+	handle @preview {
+		reverse_proxy 127.0.0.1:8080
+	}
+	respond 404
+}
+
+# Preserve the explicit raw-IP test entry while DNS is being cut over. The
+# environment placeholder is supplied through the systemd service override.
+http://{$AGENTPOP_MANAGEMENT_IP:127.0.0.1} {
+	import security_headers
+	reverse_proxy 127.0.0.1:8088
+}

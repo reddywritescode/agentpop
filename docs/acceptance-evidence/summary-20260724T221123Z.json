@@ -1,0 +1,614 @@
+{
+  "runId": "20260724T221123Z",
+  "generatedAt": "2026-07-24T22:11:41Z",
+  "summary": {
+    "pass": 82,
+    "fail": 0,
+    "partial": 3,
+    "skipLive": 1
+  },
+  "results": [
+    {
+      "id": "WEB-001",
+      "status": "PASS",
+      "surface": "public web",
+      "detail": "Marketing shell responds",
+      "verifiedAt": "2026-07-24T22:11:23Z"
+    },
+    {
+      "id": "WEB-002",
+      "status": "PASS",
+      "surface": "public web",
+      "detail": "Sign-in route responds through SPA fallback",
+      "verifiedAt": "2026-07-24T22:11:23Z"
+    },
+    {
+      "id": "WEB-003",
+      "status": "PASS",
+      "surface": "customer web",
+      "detail": "Dashboard route responds through SPA fallback",
+      "verifiedAt": "2026-07-24T22:11:24Z"
+    },
+    {
+      "id": "WEB-004",
+      "status": "PASS",
+      "surface": "operator web",
+      "detail": "Admin login route responds through SPA fallback",
+      "verifiedAt": "2026-07-24T22:11:24Z"
+    },
+    {
+      "id": "API-001",
+      "status": "PASS",
+      "surface": "public API",
+      "detail": "Health endpoint reports a healthy control/data plane",
+      "verifiedAt": "2026-07-24T22:11:24Z"
+    },
+    {
+      "id": "API-002",
+      "status": "PASS",
+      "surface": "public API",
+      "detail": "Catalog publishes sizes, events, roles, and scopes",
+      "verifiedAt": "2026-07-24T22:11:24Z"
+    },
+    {
+      "id": "API-003",
+      "status": "PASS",
+      "surface": "control plane",
+      "detail": "Control-plane status includes a registered host",
+      "verifiedAt": "2026-07-24T22:11:24Z"
+    },
+    {
+      "id": "API-004",
+      "status": "PASS",
+      "surface": "data plane",
+      "detail": "Data-plane host inventory is healthy",
+      "verifiedAt": "2026-07-24T22:11:25Z"
+    },
+    {
+      "id": "API-005",
+      "status": "PASS",
+      "surface": "health UI",
+      "detail": "Platform health exposes control-plane and host capacity",
+      "verifiedAt": "2026-07-24T22:11:25Z"
+    },
+    {
+      "id": "SBX-001",
+      "status": "PASS",
+      "surface": "sandboxes",
+      "detail": "Created isolated sandbox sb-b9ce1ed74311954a3366b63b",
+      "verifiedAt": "2026-07-24T22:11:26Z"
+    },
+    {
+      "id": "SBX-002",
+      "status": "PASS",
+      "surface": "sandboxes",
+      "detail": "Idempotency replays the original sandbox",
+      "verifiedAt": "2026-07-24T22:11:26Z"
+    },
+    {
+      "id": "SBX-003",
+      "status": "PASS",
+      "surface": "sandbox detail / terminal",
+      "detail": "Exec runs inside the sandbox with its environment",
+      "verifiedAt": "2026-07-24T22:11:27Z"
+    },
+    {
+      "id": "SBX-004",
+      "status": "PASS",
+      "surface": "sandbox detail / configuration",
+      "detail": "Configuration updates desired and runtime state",
+      "verifiedAt": "2026-07-24T22:11:27Z"
+    },
+    {
+      "id": "SBX-005",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "File upload writes bytes into the guest",
+      "verifiedAt": "2026-07-24T22:11:27Z"
+    },
+    {
+      "id": "SBX-006",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "File listing returns the uploaded file",
+      "verifiedAt": "2026-07-24T22:11:27Z"
+    },
+    {
+      "id": "SBX-007",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "File download returns exact guest bytes",
+      "verifiedAt": "2026-07-24T22:11:27Z"
+    },
+    {
+      "id": "SBX-008",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "Directory creation is reflected in listing",
+      "verifiedAt": "2026-07-24T22:11:27Z"
+    },
+    {
+      "id": "SBX-009",
+      "status": "PASS",
+      "surface": "sandbox detail / metrics",
+      "detail": "Runtime metrics are sampled from the guest",
+      "verifiedAt": "2026-07-24T22:11:27Z"
+    },
+    {
+      "id": "SBX-010",
+      "status": "PASS",
+      "surface": "sandbox detail / events",
+      "detail": "Sandbox event history contains create and exec",
+      "verifiedAt": "2026-07-24T22:11:27Z"
+    },
+    {
+      "id": "SBX-011",
+      "status": "PASS",
+      "surface": "sandbox detail / SSH",
+      "detail": "SSH discovery returns host, user, key, and executable command",
+      "verifiedAt": "2026-07-24T22:11:28Z"
+    },
+    {
+      "id": "SBX-012",
+      "status": "PASS",
+      "surface": "sandbox detail / ports",
+      "detail": "Public preview port can be exposed",
+      "verifiedAt": "2026-07-24T22:11:28Z"
+    },
+    {
+      "id": "SBX-013",
+      "status": "PASS",
+      "surface": "sandbox detail / ports",
+      "detail": "Edge preview proxies to the guest service",
+      "verifiedAt": "2026-07-24T22:11:29Z"
+    },
+    {
+      "id": "SBX-014",
+      "status": "PASS",
+      "surface": "sandbox detail / ports",
+      "detail": "Exposed port can be removed",
+      "verifiedAt": "2026-07-24T22:11:30Z"
+    },
+    {
+      "id": "SBX-015",
+      "status": "PASS",
+      "surface": "sandboxes / fork",
+      "detail": "Fork created sb-cb442df0aefad7c6fa3d9038",
+      "verifiedAt": "2026-07-24T22:11:30Z"
+    },
+    {
+      "id": "SBX-016",
+      "status": "PASS",
+      "surface": "sandboxes / fork",
+      "detail": "Fork copies workspace content",
+      "verifiedAt": "2026-07-24T22:11:31Z"
+    },
+    {
+      "id": "SBX-017",
+      "status": "PASS",
+      "surface": "sandboxes / pause",
+      "detail": "Pause transitions runtime and desired state",
+      "verifiedAt": "2026-07-24T22:11:31Z"
+    },
+    {
+      "id": "SBX-018",
+      "status": "PASS",
+      "surface": "sandboxes / resume",
+      "detail": "Resume restores runtime execution",
+      "verifiedAt": "2026-07-24T22:11:31Z"
+    },
+    {
+      "id": "SBX-019",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "File and directory deletion removes guest paths",
+      "verifiedAt": "2026-07-24T22:11:31Z"
+    },
+    {
+      "id": "AGT-001",
+      "status": "PASS",
+      "surface": "agents / deploy",
+      "detail": "Agent deployed with redacted BYOK secret",
+      "verifiedAt": "2026-07-24T22:11:32Z"
+    },
+    {
+      "id": "AGT-002",
+      "status": "PASS",
+      "surface": "agents",
+      "detail": "Agent appears in inventory",
+      "verifiedAt": "2026-07-24T22:11:32Z"
+    },
+    {
+      "id": "AGT-003",
+      "status": "PASS",
+      "surface": "agents / model keys",
+      "detail": "Secret metadata is readable but values are never returned",
+      "verifiedAt": "2026-07-24T22:11:32Z"
+    },
+    {
+      "id": "AGT-004",
+      "status": "PASS",
+      "surface": "agents / model keys",
+      "detail": "Secret is injected into the agent sandbox",
+      "verifiedAt": "2026-07-24T22:11:32Z"
+    },
+    {
+      "id": "AGT-005",
+      "status": "PASS",
+      "surface": "agents / logs",
+      "detail": "Agent lifecycle logs are available",
+      "verifiedAt": "2026-07-24T22:11:32Z"
+    },
+    {
+      "id": "AGT-006",
+      "status": "PASS",
+      "surface": "agents / stop",
+      "detail": "Stop pauses the bound sandbox",
+      "verifiedAt": "2026-07-24T22:11:33Z"
+    },
+    {
+      "id": "AGT-007",
+      "status": "PASS",
+      "surface": "agents / restart",
+      "detail": "Restart resumes the bound sandbox and reapplies secrets",
+      "verifiedAt": "2026-07-24T22:11:33Z"
+    },
+    {
+      "id": "AGT-008",
+      "status": "PASS",
+      "surface": "agents / model keys",
+      "detail": "Secret rotation increments applied generation",
+      "verifiedAt": "2026-07-24T22:11:33Z"
+    },
+    {
+      "id": "EVAL-001",
+      "status": "PASS",
+      "surface": "agents / evaluations",
+      "detail": "Eval suite persisted for the agent",
+      "verifiedAt": "2026-07-24T22:11:33Z"
+    },
+    {
+      "id": "EVAL-002",
+      "status": "PASS",
+      "surface": "agents / evaluations",
+      "detail": "Eval executes inside the sandbox and passes its release gate",
+      "verifiedAt": "2026-07-24T22:11:33Z"
+    },
+    {
+      "id": "EVAL-003",
+      "status": "PASS",
+      "surface": "agents / evaluations",
+      "detail": "Eval history is queryable by agent",
+      "verifiedAt": "2026-07-24T22:11:33Z"
+    },
+    {
+      "id": "TPL-001",
+      "status": "PASS",
+      "surface": "templates / build",
+      "detail": "Definition built into immutable image agentpop/tpl-qa-tpl-18679:v1; new sandbox boots from it with build artifacts present",
+      "verifiedAt": "2026-07-24T22:11:37Z"
+    },
+    {
+      "id": "TPL-002",
+      "status": "PASS",
+      "surface": "templates / build logs",
+      "detail": "Persisted builder logs include steps, command output, and result",
+      "verifiedAt": "2026-07-24T22:11:37Z"
+    },
+    {
+      "id": "TPL-003",
+      "status": "PASS",
+      "surface": "templates / deprecate",
+      "detail": "Deprecation blocks new sandboxes (409) while the existing runtime keeps running",
+      "verifiedAt": "2026-07-24T22:11:37Z"
+    },
+    {
+      "id": "CON-000",
+      "status": "PASS",
+      "surface": "connectors",
+      "detail": "Composio-backed connector inventory is exposed",
+      "verifiedAt": "2026-07-24T22:11:37Z"
+    },
+    {
+      "id": "CON-001",
+      "status": "PASS",
+      "surface": "connectors / OAuth",
+      "detail": "Real Composio Connect Link and single-use pending state created",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "CON-003",
+      "status": "PASS",
+      "surface": "connectors / callback",
+      "detail": "OAuth callback consumed pending state and redirected safely",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "CON-006",
+      "status": "PASS",
+      "surface": "connectors / catalog",
+      "detail": "Live Composio catalog search returns provider toolkits",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "CON-004",
+      "status": "PASS",
+      "surface": "connectors / invocation",
+      "detail": "Invocation endpoint blocks the unconnected provider slack",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "CON-002",
+      "status": "PASS",
+      "surface": "connectors / grants",
+      "detail": "Grant mutation refuses to fabricate a connection before OAuth (slack)",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "CON-005",
+      "status": "PASS",
+      "surface": "connectors / revoke",
+      "detail": "Revoke calls the upstream broker before deleting local and agent grants",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "NET-001",
+      "status": "PASS",
+      "surface": "networks",
+      "detail": "Network record created",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "NET-002",
+      "status": "PASS",
+      "surface": "networks",
+      "detail": "Sandbox attachment is persisted",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "NET-003",
+      "status": "PARTIAL",
+      "surface": "networks / data plane",
+      "detail": "Attachment is topology metadata; runtime network isolation/routing is not enforced",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "NET-004",
+      "status": "PASS",
+      "surface": "networks",
+      "detail": "Sandbox can be detached",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "STO-001",
+      "status": "PASS",
+      "surface": "storage",
+      "detail": "Storage registration persists without returning credentials",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "STO-002",
+      "status": "PASS",
+      "surface": "storage",
+      "detail": "Storage attachment is persisted",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "STO-003",
+      "status": "PARTIAL",
+      "surface": "storage / data plane",
+      "detail": "Attachment is metadata; bucket is not mounted or credential-brokered into the guest",
+      "verifiedAt": "2026-07-24T22:11:38Z"
+    },
+    {
+      "id": "STO-004",
+      "status": "PASS",
+      "surface": "storage",
+      "detail": "Storage can be detached",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "WHK-001",
+      "status": "PASS",
+      "surface": "webhooks",
+      "detail": "Webhook created and signing secret revealed once",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "WHK-002",
+      "status": "PASS",
+      "surface": "webhooks",
+      "detail": "Test delivery reaches receiver",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "WHK-003",
+      "status": "PASS",
+      "surface": "webhooks / security",
+      "detail": "Delivery includes event and versioned HMAC signature headers",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "AUD-001",
+      "status": "PASS",
+      "surface": "audit",
+      "detail": "Customer audit ledger records mutations",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "TEAM-001",
+      "status": "PASS",
+      "surface": "settings / team",
+      "detail": "Member invitation persists pending member",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "TEAM-002",
+      "status": "PASS",
+      "surface": "settings / team",
+      "detail": "Member role update persists",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "TEAM-003",
+      "status": "PASS",
+      "surface": "settings / team",
+      "detail": "Member removal succeeds",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "KEY-001",
+      "status": "PASS",
+      "surface": "developer / API keys",
+      "detail": "Scoped API key created and secret revealed once",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "KEY-002",
+      "status": "PASS",
+      "surface": "developer / API keys",
+      "detail": "Key listing omits secret material",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "BILL-001",
+      "status": "PASS",
+      "surface": "settings / billing",
+      "detail": "Usage and credit meters are queryable",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "QUOTA-001",
+      "status": "PASS",
+      "surface": "settings / quotas",
+      "detail": "Quota limits are queryable",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "QUOTA-002",
+      "status": "PASS",
+      "surface": "settings / quotas",
+      "detail": "Quota increase request persists",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "PROJ-001",
+      "status": "PASS",
+      "surface": "settings / project",
+      "detail": "Project update persists",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "ADM-001",
+      "status": "PASS",
+      "surface": "operator / login",
+      "detail": "Owner-only login returns a private session",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "ADM-002",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "operator session",
+      "verifiedAt": "2026-07-24T22:11:39Z"
+    },
+    {
+      "id": "ADM-003",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "operations overview",
+      "verifiedAt": "2026-07-24T22:11:40Z"
+    },
+    {
+      "id": "ADM-004",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "control-plane detail",
+      "verifiedAt": "2026-07-24T22:11:40Z"
+    },
+    {
+      "id": "ADM-005",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "host inventory",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "ADM-006",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "runtime inventory",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "ADM-007",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "private audit ledger",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "ADM-008",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "redacted private configuration",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "ADM-009",
+      "status": "PASS",
+      "surface": "operator / data plane",
+      "detail": "Reconcile reports desired versus observed runtime",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "ADM-010",
+      "status": "PASS",
+      "surface": "operator / logout",
+      "detail": "Private session can be revoked",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "CLI-001",
+      "status": "PASS",
+      "surface": "CLI",
+      "detail": "CLI reads the live sandbox inventory",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "MCP-001",
+      "status": "PASS",
+      "surface": "MCP",
+      "detail": "MCP server binary exists; protocol smoke is run by scripts/smoke-mcp.sh",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "SDK-001",
+      "status": "PASS",
+      "surface": "SDKs",
+      "detail": "TypeScript and Python SDK source/artifacts are present",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "AUTH-001",
+      "status": "PARTIAL",
+      "surface": "customer authentication",
+      "detail": "Customer sign-in is a browser-local demo session, not production identity/OIDC",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "UI-001",
+      "status": "PASS",
+      "surface": "UI interaction audit",
+      "detail": "49 browser route/control checks passed with screenshots",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    },
+    {
+      "id": "FIRE-001",
+      "status": "SKIP-LIVE",
+      "surface": "Firecracker data plane",
+      "detail": "macOS has no KVM; Docker compatibility plane passed. Run on Linux/KVM for microVM proof",
+      "verifiedAt": "2026-07-24T22:11:41Z"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@agentpop/sdk",
+  "version": "0.1.0",
+  "description": "Zero-dependency TypeScript SDK for AgentPop sandboxes and cloud agents.",
+  "license": "MIT",
+  "homepage": "https://agentpop.cloud",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reddywritescode/agentpop.git",
+    "directory": "packages/sdk"
+  },
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}
