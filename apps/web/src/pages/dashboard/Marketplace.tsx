@@ -43,7 +43,8 @@ export function Marketplace() {
   );
   const [generated, setGenerated] = React.useState<GeneratedRecipe | null>(null);
   const [generatedRecipes, setGeneratedRecipes] = React.useState<GeneratedRecipe[]>(readGenerated);
-  const [dockerfile, setDockerfile] = React.useState("");
+  const [generatedFiles, setGeneratedFiles] = React.useState<NonNullable<GeneratedRecipe["files"]>>([]);
+  const [generatedFile, setGeneratedFile] = React.useState("Dockerfile");
   const [generating, setGenerating] = React.useState(false);
   const [building, setBuilding] = React.useState(false);
   const [formError, setFormError] = React.useState("");
@@ -95,8 +96,12 @@ export function Marketplace() {
     setFormError("");
     try {
       const recipe = await client.generateMarketplaceRecipe({ prompt: prompt.trim(), kind: promptKind });
+      const files = recipe.files?.length
+        ? recipe.files
+        : [{ path: "Dockerfile", language: "dockerfile", content: recipe.definition }];
       setGenerated(recipe);
-      setDockerfile(recipe.definition);
+      setGeneratedFiles(files);
+      setGeneratedFile(files[0]?.path ?? "Dockerfile");
     } catch (error) {
       setFormError(error instanceof Error ? error.message : String(error));
     } finally {
@@ -109,13 +114,18 @@ export function Marketplace() {
     setBuilding(true);
     setFormError("");
     try {
+      const dockerfile = generatedFiles.find((file) => file.path === "Dockerfile")?.content ?? generated.definition;
       const created = await client.createTemplate({
         name: generated.id,
         description: generated.tagline,
         definition: dockerfile,
       });
       await client.buildTemplate(created.id);
-      const saved = [{ ...generated, definition: dockerfile }, ...generatedRecipes.filter((item) => item.id !== generated.id)];
+      const saved = [{
+        ...generated,
+        definition: dockerfile,
+        files: generatedFiles.map((file) => file.path === "Dockerfile" ? { ...file, content: dockerfile } : file),
+      }, ...generatedRecipes.filter((item) => item.id !== generated.id)];
       setGeneratedRecipes(saved);
       saveGenerated(saved);
       setGenerated(null);
@@ -155,7 +165,7 @@ export function Marketplace() {
           <div style={{ flex: 1 }}>
             <div style={{ font: "600 16px/22px var(--font-sans)" }}>Create a programmable image</div>
             <div style={{ font: "12px/18px var(--font-sans)", color: "var(--text-secondary)", marginTop: 2 }}>
-              AgentPop generates a reviewable Dockerfile, manifest, and README from an allowlisted package catalog. You approve every file before a build runs.
+              A configured model interprets your intent using AgentPop reference images, then generates a reviewable Dockerfile, manifest, README, inputs, and validation plan. You approve every file before a build runs.
             </div>
           </div>
           <div className="seg">
@@ -236,11 +246,13 @@ export function Marketplace() {
       {generated ? (
         <Modal
           title="Review generated image"
-          desc={`${generated.generatedBy} · nothing runs until you approve this Dockerfile.`}
-          onClose={() => { setGenerated(null); setFormError(""); }}
+          desc={`${generated.generatedBy} · nothing builds or runs until you approve the complete source bundle.`}
+          width={760}
+          onClose={() => { setGenerated(null); setGeneratedFiles([]); setFormError(""); }}
           footer={
             <>
               <Badge tone="outline">{generated.kind}</Badge>
+              <Badge tone="outline">{generatedFiles.length} files</Badge>
               <span className="spacer" />
               <Button variant="secondary" onClick={() => setGenerated(null)}>Cancel</Button>
               <Button loading={building} leadingIcon={<Icon name="hammer" />} onClick={buildGenerated}>
@@ -252,12 +264,46 @@ export function Marketplace() {
           <Field label="Image name">
             <Input value={generated.id} disabled mono />
           </Field>
-          <Field
-            label={<span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>Dockerfile <CopyButton text={dockerfile} /></span>}
-            help="This is the executable image source. AgentPop also emits an agentpop.yaml manifest and README so the artifact is portable and self-documenting."
-          >
-            <Textarea mono rows={11} value={dockerfile} onChange={(event) => setDockerfile(event.target.value)} />
-          </Field>
+          <div className="seg" style={{ marginBottom: 10 }}>
+            {generatedFiles.map((file) => (
+              <button
+                key={file.path}
+                className={generatedFile === file.path ? "active" : ""}
+                onClick={() => setGeneratedFile(file.path)}
+              >
+                {file.path}
+              </button>
+            ))}
+          </div>
+          {generatedFiles.filter((file) => file.path === generatedFile).map((file) => (
+            <Field
+              key={file.path}
+              label={<span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>{file.path} <CopyButton text={file.content} /></span>}
+              help={file.path === "Dockerfile"
+                ? "Executable image source. The build service accepts AgentPop's single-stage FROM + RUN subset."
+                : "Portable source metadata generated from the same intent. Review and edit it before approving the image."}
+            >
+              <Textarea
+                mono
+                rows={file.path === "README.md" ? 15 : 12}
+                value={file.content}
+                onChange={(event) => setGeneratedFiles((current) => current.map((candidate) => (
+                  candidate.path === file.path ? { ...candidate, content: event.target.value } : candidate
+                )))}
+              />
+            </Field>
+          ))}
+          {(generated.credentials?.length || generated.requiredConnectors?.length || generated.ports?.length) ? (
+            <div className="grantnote" style={{ alignItems: "flex-start", marginTop: 10 }}>
+              <Icon name="key-round" size={16} />
+              <div>
+                {generated.credentials?.length ? <div><strong>Optional secrets:</strong> {generated.credentials.map((item) => item.name).join(", ")}</div> : null}
+                {generated.requiredConnectors?.length ? <div><strong>Connectors:</strong> {generated.requiredConnectors.join(", ")}</div> : null}
+                {generated.ports?.length ? <div><strong>Suggested ports:</strong> {generated.ports.join(", ")}</div> : null}
+                <div style={{ marginTop: 4 }}>The image can deploy without secrets; add or rotate them later.</div>
+              </div>
+            </div>
+          ) : null}
           {formError ? <div className="help err">{formError}</div> : null}
         </Modal>
       ) : null}
@@ -290,9 +336,14 @@ export function Marketplace() {
                     files: inspect.files,
                     persistenceModes: inspect.persistenceModes,
                     defaultCommand: inspect.defaultCommand,
+                    requiredConnectors: inspect.requiredConnectors,
                   };
                   setGenerated(forked);
-                  setDockerfile(inspect.definition);
+                  const files = inspect.files?.length
+                    ? inspect.files
+                    : [{ path: "Dockerfile", language: "dockerfile", content: inspect.definition }];
+                  setGeneratedFiles(files);
+                  setGeneratedFile(files[0]?.path ?? "Dockerfile");
                   setInspect(null);
                 }}
               >

@@ -40,6 +40,7 @@ type server struct {
 	customers    *customerAuth
 	secrets      *secretbox.Box
 	connectors   *connectorBroker
+	imagePlanner marketplaceImageGenerator
 	startedAt    time.Time
 }
 
@@ -82,8 +83,9 @@ func main() {
 			os.Getenv("CONNECTOR_BROKER_URL"),
 			os.Getenv("CONNECTOR_BROKER_TOKEN"),
 		),
-		startedAt: time.Now().UTC(),
-		metrics:   map[string]metricsPoint{},
+		imagePlanner: newMarketplaceImageGeneratorFromEnv(),
+		startedAt:    time.Now().UTC(),
+		metrics:      map[string]metricsPoint{},
 	}
 
 	mux := http.NewServeMux()

@@ -1,0 +1,159 @@
+openapi: 3.1.0
+info:
+  title: AgentPop owner API
+  version: 0.1.0
+  description: Owner-only control-plane and data-plane operations. Never expose this API directly to customer applications.
+servers:
+  - url: https://admin.agentpop.cloud
+    description: Hosted owner console gateway; not a customer API
+  - url: http://127.0.0.1:8080
+    description: Local control plane
+security:
+  - ownerSession: []
+paths:
+  /private/v1/auth/login:
+    post:
+      security: []
+      operationId: ownerLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+      responses:
+        "200":
+          description: Signed owner session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /private/v1/auth/session:
+    get:
+      operationId: getOwnerSession
+      responses:
+        "200":
+          description: Current owner session
+  /private/v1/auth/logout:
+    post:
+      operationId: ownerLogout
+      responses:
+        "204":
+          description: Client may discard the stateless session
+  /private/v1/overview:
+    get:
+      operationId: getOperatorOverview
+      responses:
+        "200":
+          description: Desired/observed counts and host health
+  /private/v1/control-plane:
+    get:
+      operationId: getControlPlaneInternals
+      responses:
+        "200":
+          description: Process, component, and dependency health
+  /private/v1/data-plane/hosts:
+    get:
+      operationId: listPrivateHosts
+      responses:
+        "200":
+          description: Authenticated host inventory and capacity
+  /private/v1/data-plane/sandboxes:
+    get:
+      operationId: listRuntimeSandboxes
+      responses:
+        "200":
+          description: Runtime objects observed by the host agent
+  /private/v1/data-plane/hosts/{id}/drain:
+    post:
+      operationId: setHostDraining
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [draining]
+              properties:
+                draining: { type: boolean }
+      responses:
+        "200":
+          description: Updated scheduling state
+        "404":
+          description: Host not found
+  /private/v1/reconcile:
+    post:
+      operationId: reconcileDesiredAndRuntimeState
+      responses:
+        "200":
+          description: Non-destructive reconciliation report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReconcileReport"
+  /private/v1/audit:
+    get:
+      operationId: listPrivateAuditEvents
+      responses:
+        "200":
+          description: Owner and customer operations
+  /private/v1/operations:
+    get:
+      operationId: listRecentOperations
+      responses:
+        "200":
+          description: Most recent operation records
+  /private/v1/config:
+    get:
+      operationId: getSafePrivateConfiguration
+      responses:
+        "200":
+          description: Redacted configuration flags; never contains secret values
+components:
+  securitySchemes:
+    ownerSession:
+      type: http
+      scheme: bearer
+      bearerFormat: AgentPopOwnerSession
+  responses:
+    Unauthorized:
+      description: Invalid credentials or owner session
+  schemas:
+    LoginResponse:
+      type: object
+      required: [token, expiresAt, owner]
+      properties:
+        token: { type: string }
+        expiresAt: { type: string, format: date-time }
+        owner:
+          type: object
+          required: [email, role]
+          properties:
+            email: { type: string, format: email }
+            role: { type: string, const: owner }
+    ReconcileReport:
+      type: object
+      required: [result, desired, runtime, repaired, missingRuntime, orphanedRuntime, completedAt]
+      properties:
+        result: { type: string, enum: [ok, drift] }
+        desired: { type: integer }
+        runtime: { type: integer }
+        repaired: { type: integer }
+        missingRuntime:
+          type: array
+          items: { type: string }
+        orphanedRuntime:
+          type: array
+          items: { type: string }
+        completedAt: { type: string, format: date-time }

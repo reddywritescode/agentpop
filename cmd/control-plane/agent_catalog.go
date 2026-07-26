@@ -139,7 +139,8 @@ func agentPackages() []agentPackage {
 			Category: "general agent",
 			UseCases: []string{"personal assistant", "tool-using agent", "chat channels", "always-on automation"},
 			Definition: "FROM agentpop/devbox:local\n" +
-				"RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm && rm -rf /var/lib/apt/lists/*\n" +
+				"RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl xz-utils && rm -rf /var/lib/apt/lists/*\n" +
+				"RUN NODE_VERSION=24.15.0 && DEB_ARCH=$(dpkg --print-architecture) && case \"$DEB_ARCH\" in amd64) NODE_ARCH=x64 ;; arm64) NODE_ARCH=arm64 ;; *) echo \"unsupported architecture: $DEB_ARCH\" >&2; exit 1 ;; esac && NODE_TARBALL=node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.xz && curl -fsSLO https://nodejs.org/dist/v${NODE_VERSION}/${NODE_TARBALL} && curl -fsSLO https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt && grep \" ${NODE_TARBALL}$\" SHASUMS256.txt | sha256sum -c - && tar -xJf ${NODE_TARBALL} -C /usr/local --strip-components=1 && rm -f ${NODE_TARBALL} SHASUMS256.txt && node --version && npm --version\n" +
 				"RUN npm install -g openclaw\n",
 			DefaultCommand: "/bin/bash",
 			DefaultModel:   "anthropic/claude-sonnet-4-5",

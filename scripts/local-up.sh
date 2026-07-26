@@ -42,6 +42,9 @@ PUBLIC_WEB_URL=http://127.0.0.1:5173 \
 ALLOWED_ORIGINS=http://127.0.0.1:5173,http://localhost:5173 \
 CONNECTOR_BROKER_URL=http://127.0.0.1:7070 \
 CONNECTOR_BROKER_TOKEN="${CONNECTOR_BROKER_TOKEN:-agentpop-local-connector-broker-token}" \
+IMAGE_GENERATOR_API_URL="${IMAGE_GENERATOR_API_URL:-http://127.0.0.1:11434/api/chat}" \
+IMAGE_GENERATOR_API_KEY="${IMAGE_GENERATOR_API_KEY:-}" \
+IMAGE_GENERATOR_MODEL="${IMAGE_GENERATOR_MODEL:-llama3.2:3b}" \
   .local/bin/control-plane >.local/logs/control-plane.log 2>&1 &
 control_plane_pid=$!
 

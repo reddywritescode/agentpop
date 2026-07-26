@@ -2,6 +2,15 @@
 
 Zero-dependency TypeScript SDK for the AgentPop control plane.
 
+Install the registry package after the first npm release, or consume the
+current open-source repository directly:
+
+```bash
+npm install @agentpop/sdk
+# Source install before the registry release:
+npm install github:reddywritescode/agentpop-typescript
+```
+
 ```ts
 import { AgentPopClient } from "@agentpop/sdk";
 
@@ -112,6 +121,7 @@ const run = await client.runEvalSuite(suite.id);
 console.log(run.passed, run.score, run.cases);
 ```
 
-The suite schema intentionally follows Open AgentOps. See
-[`docs/agent-evals.md`](../../docs/agent-evals.md) for YAML import, local rubric
-generation, runner output, metrics, and security boundaries.
+The suite schema intentionally follows Open AgentOps. See the
+[AgentPop evaluation guide](https://github.com/reddywritescode/agentpop/blob/main/docs/agent-evals.md)
+for YAML import, local rubric generation, runner output, metrics, and security
+boundaries.

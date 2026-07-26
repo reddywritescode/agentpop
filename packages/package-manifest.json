@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "organization": "reddywritescode",
+  "packages": [
+    {
+      "name": "agentpop-cli",
+      "path": "packages/agentpop-cli",
+      "repository": "https://github.com/reddywritescode/agentpop-cli",
+      "verify": "go test ./... && go build ./cmd/agentpop"
+    },
+    {
+      "name": "agentpop-mcp",
+      "path": "packages/agentpop-mcp",
+      "repository": "https://github.com/reddywritescode/agentpop-mcp",
+      "verify": "go test ./... && go build ./..."
+    },
+    {
+      "name": "@agentpop/sdk",
+      "path": "packages/sdk",
+      "repository": "https://github.com/reddywritescode/agentpop-typescript",
+      "verify": "pnpm build && pnpm typecheck"
+    },
+    {
+      "name": "agentpop",
+      "path": "packages/python-sdk",
+      "repository": "https://github.com/reddywritescode/agentpop-python",
+      "verify": "python -m compileall agentpop"
+    },
+    {
+      "name": "agentpop-go",
+      "path": "packages/go-sdk",
+      "repository": "https://github.com/reddywritescode/agentpop-go",
+      "verify": "go test ./..."
+    },
+    {
+      "name": "agentpop-openapi",
+      "path": "packages/openapi",
+      "repository": "https://github.com/reddywritescode/agentpop-openapi",
+      "verify": "./verify.sh"
+    },
+    {
+      "name": "agentpop-self-host",
+      "path": "packages/self-host",
+      "repository": "https://github.com/reddywritescode/agentpop-self-host",
+      "verify": "docker compose --env-file .env.example config"
+    },
+    {
+      "name": "agentpop-claude-plugin",
+      "path": "packages/claude-plugin",
+      "repository": "https://github.com/reddywritescode/agentpop-claude-plugin",
+      "verify": "./verify.sh"
+    },
+    {
+      "name": "homebrew-agentpop",
+      "path": "packages/homebrew-agentpop",
+      "repository": "https://github.com/reddywritescode/homebrew-agentpop",
+      "verify": "ruby -c Formula/agentpop.rb"
+    }
+  ]
+}

@@ -31,7 +31,7 @@ AgentPop API remains responsible for real authorization and isolation.
 The current tools cover:
 
 - control-plane status, platform health, and data-plane hosts;
-- reusable image search/inspection, deterministic image generation,
+- reusable image search/inspection, model-backed multi-file image generation,
   immutable builds, forks, and persistent or ephemeral deployment;
 - sandbox list/get/create/update/fork/exec/SSH/pause/resume/destroy and preview ports;
 - workspace file listing, directory creation, delete, and UTF-8 text upload/download;
@@ -55,11 +55,15 @@ The canonical image tools are:
 - `agentpop_fork_image`
 - `agentpop_deploy_image`
 
-`agentpop_generate_image` produces a reviewable Dockerfile from an allowlisted
-package catalog. It does not execute the prompt or claim that an LLM was used.
-Secrets accepted by create/deploy tools are optional and write-only. They can
-also be added or rotated later with the sandbox-secret MCP tools and are never
-returned by read tools. The older recipe tools remain compatibility aliases.
+`agentpop_generate_image` asks the operator-configured model to produce a
+reviewable Dockerfile, `agentpop.yaml`, README, and supporting files using the
+published image schema and curated reference bundles. The control plane
+validates every returned file, repairs invalid output through the model, and
+fails closed when no generator is configured. Nothing builds until the caller
+explicitly approves a build. Secrets accepted by create/deploy tools are
+optional and write-only. They can also be added or rotated later with the
+sandbox-secret MCP tools and are never returned by read tools. The older
+recipe tools remain compatibility aliases.
 
 Binary file transfer remains available through REST, both SDKs, and the CLI.
 The MCP text tools intentionally cap writes at 1 MiB.

@@ -59,7 +59,7 @@ Status vocabulary:
 | IMG-003 | Search images | Results match text without losing filter | `q` query | PASS |
 | IMG-004 | Inspect source | Dockerfile, manifest, README, license, credentials, and connectors render | Image API/UI | PASS |
 | IMG-005 | Build curated image | Starts a real immutable image build | `POST .../build` | PASS |
-| IMG-006 | Describe a computer | Generates allowlisted image source; prompt text is not executed | `POST /v1/images/generate` | PASS |
+| IMG-006 | Describe a computer | Configured model generates validated multi-file image source; nothing builds before approval | `POST /v1/images/generate` | PASS-LIVE (local Ollama) |
 | IMG-007 | Review/edit generated Dockerfile | Nothing builds before explicit approval | Review modal | PASS |
 | IMG-008 | Fork image | Creates an independent project-owned image definition | `POST .../fork` | PASS |
 | IMG-009 | Deploy image | Creates a sandbox with image kind/id | `POST .../deploy` | PASS |

@@ -6,8 +6,7 @@
   "homepage": "https://agentpop.cloud",
   "repository": {
     "type": "git",
-    "url": "https://github.com/reddywritescode/agentpop.git",
-    "directory": "packages/sdk"
+    "url": "https://github.com/reddywritescode/agentpop-typescript.git"
   },
   "type": "module",
   "files": [
@@ -25,6 +24,7 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean",
+    "prepare": "npm run build",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit"
   },

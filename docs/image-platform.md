@@ -35,6 +35,38 @@ Every catalog result contains virtual source files:
 Reference copies of the base agent and OpenClaw files live under
 `images/catalog/`.
 
+## Intent-to-image generation
+
+`POST /v1/images/generate` is a real server-side model call. The control plane
+sends the user intent, the requested image kind, the catalog index, the most
+relevant curated source bundles, a strict JSON schema, and the supported
+Dockerfile contract. The model returns:
+
+- `Dockerfile`;
+- `agentpop.yaml`;
+- `README.md`;
+- optional secret names (never values);
+- required connector names;
+- suggested ports and commands;
+- validation and usage instructions in the README.
+
+The response is validated before it reaches the review screen. Dockerfiles
+must use one `agentpop/...` base and only `FROM` + `RUN`; unsafe paths,
+unsupported instructions, secret-name formats, shell-piped downloads, and
+malformed bundles are rejected. There is no keyword/catalog fallback. If
+`IMAGE_GENERATOR_API_URL` and `IMAGE_GENERATOR_MODEL` are not configured, the
+API returns `503 image_generator_not_configured`.
+
+Local development can use the installed Ollama model without a cloud key:
+
+```sh
+export IMAGE_GENERATOR_API_URL=http://127.0.0.1:11434/api/chat
+export IMAGE_GENERATOR_MODEL=llama3.2:3b
+```
+
+Hosted deployments use a private `IMAGE_GENERATOR_API_KEY`; it is a platform
+secret and is never placed in a customer sandbox.
+
 ## Credentials and connectors
 
 Credentials are never baked into an image. Inputs such as

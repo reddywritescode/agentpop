@@ -50,11 +50,14 @@ GET  /v1/subscription
 POST /v1/subscription/checkout
 ```
 
-The generator is deliberately deterministic and allowlisted. A prompt chooses
-known packages; user-supplied shell fragments are never copied into the
-Dockerfile. The user reviews and can edit the Dockerfile before a real template
-build starts. Model and channel keys are optional at deployment and can be
-added or rotated later without rebuilding the image.
+The generator makes a real call to the operator-configured image model. It
+sends the strict image schema plus the most relevant curated source bundles,
+then validates the returned Dockerfile, manifest, README, optional secrets,
+connectors, ports, and lifecycle modes. Invalid output is repaired through the
+model and rejected if it still violates the execution policy. There is no fake
+or deterministic fallback. The user reviews and can edit every generated file
+before a real image build starts. Model and channel keys are optional at
+deployment and can be added or rotated later without rebuilding the image.
 
 ## Data plane
 
@@ -71,8 +74,12 @@ The same contract is implemented by:
 
 - `api/openapi.yaml`
 - `packages/sdk` — TypeScript
-- `sdk/python` — Python
-- `sdk/go` — Go
+- `packages/python-sdk` — Python distribution
+- `packages/go-sdk` — Go distribution
+- `packages/agentpop-cli` — CLI
+- `packages/agentpop-mcp` — MCP server
+- `packages/openapi` — public and private API contracts
+- `packages/self-host` — management-plane self-host bundle
 - `cmd/agentpop` — CLI
 - `cmd/agentpop-mcp` — stdio MCP server
 

@@ -188,6 +188,8 @@ export interface GeneratedRecipe {
   files?: AgentPackage["files"];
   persistenceModes?: AgentPackage["persistenceModes"];
   defaultCommand?: string;
+  requiredConnectors?: string[];
+  ports?: number[];
 }
 
 export interface Subscription {

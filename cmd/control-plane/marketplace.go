@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"sort"
 	"strings"
 
 	"github.com/reddywritescode/agentpop/internal/apiutil"
@@ -44,25 +43,27 @@ func (s *server) listMarketplace(w http.ResponseWriter, r *http.Request) {
 }
 
 type generatedRecipe struct {
-	ID               string            `json:"id"`
-	Kind             string            `json:"kind"`
-	Name             string            `json:"name"`
-	Tagline          string            `json:"tagline"`
-	Description      string            `json:"description"`
-	Category         string            `json:"category"`
-	UseCases         []string          `json:"useCases"`
-	Definition       string            `json:"definition"`
-	GeneratedBy      string            `json:"generatedBy"`
-	Credentials      []imageCredential `json:"credentials"`
-	Files            []imageFile       `json:"files"`
-	PersistenceModes []string          `json:"persistenceModes"`
-	DefaultCommand   string            `json:"defaultCommand,omitempty"`
+	ID                 string            `json:"id"`
+	Kind               string            `json:"kind"`
+	Name               string            `json:"name"`
+	Tagline            string            `json:"tagline"`
+	Description        string            `json:"description"`
+	Category           string            `json:"category"`
+	UseCases           []string          `json:"useCases"`
+	Definition         string            `json:"definition"`
+	GeneratedBy        string            `json:"generatedBy"`
+	Credentials        []imageCredential `json:"credentials"`
+	Files              []imageFile       `json:"files"`
+	PersistenceModes   []string          `json:"persistenceModes"`
+	DefaultCommand     string            `json:"defaultCommand,omitempty"`
+	RequiredConnectors []string          `json:"requiredConnectors"`
+	Ports              []int             `json:"ports"`
 }
 
-// generateMarketplaceRecipe turns a short environment description into a
-// reviewable Dockerfile. It intentionally uses a deterministic, allowlisted
-// generator: the API never pretends an LLM was called, and it never emits an
-// unreviewed shell fragment supplied by the prompt.
+// generateMarketplaceRecipe asks the configured model planner for a complete,
+// reviewable source bundle. There is intentionally no deterministic fallback:
+// if the model is unavailable, the API reports that instead of presenting
+// generic packages as if they satisfied the customer's intent.
 func (s *server) generateMarketplaceRecipe(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		Prompt string `json:"prompt"`
@@ -86,101 +87,28 @@ func (s *server) generateMarketplaceRecipe(w http.ResponseWriter, r *http.Reques
 		apiutil.WriteError(w, http.StatusBadRequest, "invalid_kind", "kind must be agent or sandbox")
 		return
 	}
-
-	lower := strings.ToLower(prompt)
-	// If the customer names a curated agent, generate a real forkable image
-	// from that package instead of guessing a generic Linux tool list.
-	for _, known := range agentPackages() {
-		if strings.Contains(lower, strings.ToLower(known.ID)) ||
-			strings.Contains(lower, strings.ToLower(known.Name)) {
-			name := recipeName(req.Name, prompt)
-			known.ID = name
-			known.Kind = kind
-			known.Name = strings.ReplaceAll(name, "-", " ")
-			known.Tagline = truncate(prompt, 120)
-			apiutil.WriteJSON(w, http.StatusOK, generatedRecipe{
-				ID: name, Kind: kind, Name: known.Name, Tagline: known.Tagline,
-				Description: "Generated as a forkable AgentPop image from the curated " + known.Name + " base.",
-				Category:    known.Category, UseCases: known.UseCases, Definition: known.Definition,
-				GeneratedBy: "deterministic-image-catalog-v2", Credentials: imageCredentials(known),
-				Files: imageFiles(known), PersistenceModes: []string{"persistent", "ephemeral"},
-				DefaultCommand: known.DefaultCommand,
-			})
-			return
+	if s.imagePlanner == nil {
+		apiutil.WriteError(w, http.StatusServiceUnavailable, "image_generator_not_configured", "configure IMAGE_GENERATOR_API_URL, IMAGE_GENERATOR_API_KEY, and IMAGE_GENERATOR_MODEL")
+		return
+	}
+	recipe, err := s.imagePlanner.Generate(r.Context(), imageGenerationRequest{
+		Prompt: prompt,
+		Kind:   kind,
+		Name:   strings.TrimSpace(req.Name),
+	})
+	if err != nil {
+		status := http.StatusBadGateway
+		code := "image_generation_failed"
+		if errors.Is(err, errImageGeneratorUnavailable) {
+			status = http.StatusServiceUnavailable
+			code = "image_generator_not_configured"
 		}
+		apiutil.WriteError(w, status, code, err.Error())
+		return
 	}
-	apt := map[string]bool{"ca-certificates": true, "curl": true, "git": true, "jq": true, "ripgrep": true}
-	pip := map[string]bool{}
-	category := "development"
-	useCases := []string{"custom environment", "isolated execution"}
-	if containsAny(lower, "python", "pandas", "numpy", "data", "jupyter") {
-		apt["python3"] = true
-		apt["python3-pip"] = true
-		pip["requests"] = true
-		if containsAny(lower, "pandas", "numpy", "data", "jupyter") {
-			pip["numpy"] = true
-			pip["pandas"] = true
-			category = "data"
-			useCases = append(useCases, "data analysis")
-		}
-	}
-	if containsAny(lower, "node", "javascript", "typescript", "react", "next.js", "npm") {
-		apt["nodejs"] = true
-		apt["npm"] = true
-		category = "web development"
-		useCases = append(useCases, "JavaScript and TypeScript")
-	}
-	if containsAny(lower, "golang", " go ", "go cli", "go service") {
-		apt["golang-go"] = true
-		category = "backend"
-		useCases = append(useCases, "Go services")
-	}
-	if containsAny(lower, "rust", "cargo") {
-		apt["rustc"] = true
-		apt["cargo"] = true
-		category = "systems"
-		useCases = append(useCases, "Rust development")
-	}
-	if containsAny(lower, "browser", "playwright", "scrape", "web automation") {
-		apt["python3"] = true
-		apt["python3-pip"] = true
-		pip["playwright"] = true
-		category = "web automation"
-		useCases = append(useCases, "browser automation")
-	}
-	if kind == "agent" {
-		category = "agent"
-		useCases = append(useCases, "agent runtime")
-	}
-
-	aptNames := sortedKeys(apt)
-	definition := "FROM agentpop/devbox:local\n" +
-		"RUN apt-get update && apt-get install -y --no-install-recommends " +
-		strings.Join(aptNames, " ") + " && rm -rf /var/lib/apt/lists/*\n"
-	if len(pip) > 0 {
-		definition += "RUN python3 -m pip install --break-system-packages --no-cache-dir " +
-			strings.Join(sortedKeys(pip), " ") + "\n"
-	}
-
-	name := recipeName(req.Name, prompt)
-	recipe := generatedRecipe{
-		ID:               name,
-		Kind:             kind,
-		Name:             strings.ReplaceAll(name, "-", " "),
-		Tagline:          truncate(prompt, 120),
-		Description:      "Generated from a reviewed, allowlisted package catalog. Edit the Dockerfile before building.",
-		Category:         category,
-		UseCases:         dedupeStrings(useCases),
-		Definition:       definition,
-		GeneratedBy:      "deterministic-image-catalog-v2",
-		PersistenceModes: []string{"persistent", "ephemeral"},
-	}
-	imagePkg := agentPackage{
-		ID: recipe.ID, Kind: recipe.Kind, Name: recipe.Name, Tagline: recipe.Tagline,
-		Description: recipe.Description, Category: recipe.Category, UseCases: recipe.UseCases,
-		Definition: recipe.Definition,
-	}
-	recipe.Files = imageFiles(imagePkg)
+	_ = s.audit("image.generate", recipe.ID, "ok", map[string]any{
+		"kind": recipe.Kind, "generatedBy": recipe.GeneratedBy, "files": len(recipe.Files),
+	})
 	apiutil.WriteJSON(w, http.StatusOK, recipe)
 }
 
@@ -248,24 +176,6 @@ func (s *server) createSubscriptionCheckout(w http.ResponseWriter, _ *http.Reque
 		return
 	}
 	apiutil.WriteJSON(w, http.StatusOK, map[string]string{"url": checkoutURL})
-}
-
-func containsAny(value string, candidates ...string) bool {
-	for _, candidate := range candidates {
-		if strings.Contains(value, candidate) {
-			return true
-		}
-	}
-	return false
-}
-
-func sortedKeys(values map[string]bool) []string {
-	keys := make([]string, 0, len(values))
-	for key := range values {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-	return keys
 }
 
 func recipeName(preferred, prompt string) string {

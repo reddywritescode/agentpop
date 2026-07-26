@@ -229,10 +229,13 @@ async function main() {
       },
       async () => {
         await page.getByRole("heading", { name: "Review generated image" }).waitFor();
-        await page.getByText(/deterministic-image-catalog-v\d+/, { exact: false }).waitFor();
+        await page.getByText(/model:/, { exact: false }).waitFor();
+        await page.getByRole("button", { name: "Dockerfile", exact: true }).waitFor();
+        await page.getByRole("button", { name: "agentpop.yaml", exact: true }).waitFor();
+        await page.getByRole("button", { name: "README.md", exact: true }).waitFor();
         await page.getByRole("button", { name: "Cancel" }).last().click();
       },
-      "Prompt produces a reviewable allowlisted image before build",
+      "Prompt produces a model-generated, reviewable multi-file image before build",
     );
     await action(
       page,

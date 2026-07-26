@@ -152,6 +152,23 @@ See [`packages/sdk/README.md`](packages/sdk/README.md), the
 [`Python SDK`](sdk/python/README.md), the [`Go SDK`](sdk/go/README.md), and the contract at
 [`api/openapi.yaml`](api/openapi.yaml).
 
+## Independent packages
+
+The CLI, MCP server, TypeScript/Python/Go SDKs, OpenAPI contracts, self-host
+bundle, Claude plugin, and Homebrew tap are maintained as independent release
+units under [`packages/`](packages/README.md). Run:
+
+```bash
+make test-packages
+make package-dist
+```
+
+This synchronizes every generated package from its canonical monorepo source
+and verifies each package in isolation. `package-dist` also emits nine
+checksummed source archives under `.local/releases/`. Public package
+repositories and their verification commands are recorded in
+[`packages/package-manifest.json`](packages/package-manifest.json).
+
 ## Architecture and handoff
 
 - [`CLAUDE.md`](CLAUDE.md) — Claude Code starting point: current runtime,

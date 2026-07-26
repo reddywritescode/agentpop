@@ -73,10 +73,35 @@ The curated catalog includes popular agent bases (OpenClaw, Claude Code,
 Aider, Open Interpreter, CrewAI, and Browser Use) and general computer bases
 (Base agent, Node.js, Python, Go, Rust, full-stack, and DevOps).
 
-The programmable-image generator is deterministic and allowlisted. User prompt
-text does not execute. It produces reviewable source and waits for explicit
-approval before starting a build. The generated artifact follows the same
-build, fork, deploy, lifecycle, and secrets contract as a curated image.
+The programmable-image generator now calls an operator-configured model with
+the strict AgentPop image schema and relevant curated source bundles. It
+produces a reviewable Dockerfile, manifest, README, and supporting files,
+validates them server-side, and waits for explicit approval before starting a
+build. It fails closed when no model is configured. The generated artifact
+follows the same build, fork, deploy, lifecycle, and secrets contract as a
+curated image.
+
+A customer-style OpenClaw request was interpreted by the configured local
+model, normalized against the vetted OpenClaw package definition, built into
+`agentpop/tpl-openclaw-custom:v1`, and deployed without a model key. Inside
+that runtime, `node --version` returned `v24.15.0` and
+`openclaw --version` returned `OpenClaw 2026.7.1-2`; both stdout records and
+the successful exit event appeared in Logs. The ephemeral proof sandbox was
+destroyed after the evidence was captured.
+
+- [Generated OpenClaw source](acceptance-evidence/ui/marketplace-openclaw-node24-source.png)
+- [Runtime version proof](acceptance-evidence/ui/openclaw-generated-image-runtime.png)
+- [Persisted runtime logs](acceptance-evidence/ui/openclaw-generated-image-logs.png)
+
+## Customer packages
+
+Nine independent public package repositories are published for the CLI, MCP
+server, TypeScript/Python/Go SDKs, OpenAPI contracts, self-host bundle, Claude
+Code plugin, and Homebrew tap. Clean-room installs from GitHub passed for the
+CLI, MCP server, and three SDKs. The CLI `v0.1.1` release includes checksum-
+pinned macOS/Linux binaries for arm64 and amd64.
+
+See the [package release report](package-release-report-2026-07-25.md).
 
 ## Real connector proof
 

@@ -135,6 +135,8 @@ export interface GeneratedRecipeView {
   files?: MarketplaceRecipeView["files"];
   persistenceModes?: MarketplaceRecipeView["persistenceModes"];
   defaultCommand?: string;
+  requiredConnectors?: string[];
+  ports?: number[];
 }
 
 export interface SubscriptionView {
