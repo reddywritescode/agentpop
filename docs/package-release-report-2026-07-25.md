@@ -40,6 +40,11 @@ npm and PyPI metadata respectively, but publishing those names to their public
 registries still requires owner-controlled npm/PyPI credentials. Until that
 registry step, their READMEs provide tested GitHub source-install commands.
 
+At the time of release, `sum.golang.org` returned HTTP 500 while indexing the
+new Go modules. Direct GitHub module fetches passed and are documented as the
+temporary source-install fallback. The checksum-pinned Homebrew formula and
+CLI release archives do not depend on that index.
+
 The self-host repository publishes the management-plane configuration. Its
 referenced GHCR runtime images must be published as multi-architecture images
 before a clean server can start that bundle without building the monorepo.

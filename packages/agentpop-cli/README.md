@@ -5,7 +5,13 @@ It is a dependency-free Go binary and talks only to the public AgentPop REST
 API.
 
 ```bash
-go install github.com/reddywritescode/agentpop-cli/cmd/agentpop@latest
+# Preferred: immutable release asset with a formula-pinned SHA-256.
+brew install reddywritescode/agentpop/agentpop
+
+# Source install. The direct fallback avoids transient checksum-index lag for
+# a newly published module.
+GOPROXY=direct GONOSUMDB=github.com/reddywritescode/agentpop-cli \
+  go install github.com/reddywritescode/agentpop-cli/cmd/agentpop@v0.1.1
 
 export AGENTPOP_API_URL=https://api.agentpop.cloud
 export AGENTPOP_API_TOKEN=pop_...

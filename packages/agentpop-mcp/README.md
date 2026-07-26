@@ -5,7 +5,8 @@ build, deployment, sandbox lifecycle, execution, files, SSH, preview ports,
 connectors, and platform status as typed MCP tools.
 
 ```bash
-go install github.com/reddywritescode/agentpop-mcp@latest
+GOPROXY=direct GONOSUMDB=github.com/reddywritescode/agentpop-mcp \
+  go install github.com/reddywritescode/agentpop-mcp@v0.1.0
 ```
 
 Claude Code configuration:

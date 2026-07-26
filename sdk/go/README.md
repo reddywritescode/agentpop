@@ -3,6 +3,11 @@
 The Go SDK is dependency-free and uses the same public REST contract as the
 dashboard, CLI, MCP server, TypeScript SDK, and Python SDK.
 
+```bash
+GOPROXY=direct GONOSUMDB=github.com/reddywritescode/agentpop-go \
+  go get github.com/reddywritescode/agentpop-go@v0.1.0
+```
+
 ```go
 package main
 
