@@ -6,7 +6,7 @@ only the surface they need.
 
 | Package | Distribution | Install/consume |
 | --- | --- | --- |
-| `agentpop-cli` | Go binary and Homebrew formula | `brew install reddywritescode/tap/agentpop` or release archive |
+| `agentpop-cli` | Go binary and Homebrew formula | `brew install reddywritescode/agentpop/agentpop` or release archive |
 | `agentpop-mcp` | Go stdio MCP server | release binary or container |
 | `@agentpop/sdk` | TypeScript SDK | `npm install @agentpop/sdk` |
 | `agentpop` | Python SDK | `pip install agentpop` |
@@ -14,7 +14,7 @@ only the surface they need.
 | `agentpop-openapi` | Public, private, and host-agent OpenAPI contracts | source or release archive |
 | `agentpop-self-host` | Docker Compose/Caddy self-host bundle | release archive |
 | `agentpop-claude-plugin` | Claude Code skill/plugin package | plugin marketplace |
-| `homebrew-agentpop` | Homebrew tap | `brew tap reddywritescode/tap` |
+| `homebrew-agentpop` | Homebrew tap | `brew tap reddywritescode/agentpop` |
 
 The canonical implementation remains in this repository. Run
 `./scripts/sync-package-sources.sh` after changing a CLI, MCP, SDK, OpenAPI, or
