@@ -1,0 +1,2 @@
+FROM us-central1-docker.pkg.dev/project-68f6d04f-c0c7-4396-a46/callassistant/agentpop-web@sha256:d93f1fc3c2f4415d6a894a97d8f38759b05d04e42bbe5d26671f7798fe9cf575
+COPY nginx.conf /etc/nginx/conf.d/default.conf
