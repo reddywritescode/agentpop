@@ -1,0 +1,8 @@
+{
+  "scope": "Configuration-only overlay on the existing immutable public website; no backend, VM, disk, or hosted-console restoration",
+  "cloudBuild": "e542f740-c468-437d-b4e0-129633d71fa0",
+  "imageDigest": "sha256:e88ae859cf736dcae27fb885d4aa04419cf1c6a180d3f84cb3bd23141f4aba66",
+  "revision": "agentpop-web-redirect-20261002",
+  "checks": ["nginx -t", "signin/signup/app/admin return 302 to public HTTPS unavailable page", "hosted-unavailable returns 200"],
+  "minimumInstances": 0
+}
