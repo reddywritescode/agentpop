@@ -1,0 +1,565 @@
+{
+  "runId": "20260723T232221Z",
+  "generatedAt": "2026-07-23T23:22:29Z",
+  "summary": {
+    "pass": 51,
+    "fail": 21,
+    "partial": 5,
+    "skipLive": 2
+  },
+  "results": [
+    {
+      "id": "WEB-001",
+      "status": "PASS",
+      "surface": "public web",
+      "detail": "Marketing shell responds",
+      "verifiedAt": "2026-07-23T23:22:21Z"
+    },
+    {
+      "id": "WEB-002",
+      "status": "PASS",
+      "surface": "public web",
+      "detail": "Sign-in route responds through SPA fallback",
+      "verifiedAt": "2026-07-23T23:22:21Z"
+    },
+    {
+      "id": "WEB-003",
+      "status": "PASS",
+      "surface": "customer web",
+      "detail": "Dashboard route responds through SPA fallback",
+      "verifiedAt": "2026-07-23T23:22:21Z"
+    },
+    {
+      "id": "WEB-004",
+      "status": "PASS",
+      "surface": "operator web",
+      "detail": "Admin login route responds through SPA fallback",
+      "verifiedAt": "2026-07-23T23:22:21Z"
+    },
+    {
+      "id": "API-001",
+      "status": "PASS",
+      "surface": "public API",
+      "detail": "Health endpoint reports a healthy control/data plane",
+      "verifiedAt": "2026-07-23T23:22:22Z"
+    },
+    {
+      "id": "API-002",
+      "status": "PASS",
+      "surface": "public API",
+      "detail": "Catalog publishes sizes, events, roles, and scopes",
+      "verifiedAt": "2026-07-23T23:22:22Z"
+    },
+    {
+      "id": "API-003",
+      "status": "PASS",
+      "surface": "control plane",
+      "detail": "Control-plane status includes a registered host",
+      "verifiedAt": "2026-07-23T23:22:22Z"
+    },
+    {
+      "id": "API-004",
+      "status": "PASS",
+      "surface": "data plane",
+      "detail": "Data-plane host inventory is healthy",
+      "verifiedAt": "2026-07-23T23:22:22Z"
+    },
+    {
+      "id": "API-005",
+      "status": "PASS",
+      "surface": "health UI",
+      "detail": "Platform health exposes control-plane and host capacity",
+      "verifiedAt": "2026-07-23T23:22:22Z"
+    },
+    {
+      "id": "SBX-001",
+      "status": "PASS",
+      "surface": "sandboxes",
+      "detail": "Created isolated sandbox sb-8212412a9bf0fb22ba0aa7f4",
+      "verifiedAt": "2026-07-23T23:22:23Z"
+    },
+    {
+      "id": "SBX-002",
+      "status": "PASS",
+      "surface": "sandboxes",
+      "detail": "Idempotency replays the original sandbox",
+      "verifiedAt": "2026-07-23T23:22:23Z"
+    },
+    {
+      "id": "SBX-003",
+      "status": "PASS",
+      "surface": "sandbox detail / terminal",
+      "detail": "Exec runs inside the sandbox with its environment",
+      "verifiedAt": "2026-07-23T23:22:23Z"
+    },
+    {
+      "id": "SBX-004",
+      "status": "PASS",
+      "surface": "sandbox detail / configuration",
+      "detail": "Configuration updates desired and runtime state",
+      "verifiedAt": "2026-07-23T23:22:23Z"
+    },
+    {
+      "id": "SBX-005",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "File upload writes bytes into the guest",
+      "verifiedAt": "2026-07-23T23:22:23Z"
+    },
+    {
+      "id": "SBX-006",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "File listing returns the uploaded file",
+      "verifiedAt": "2026-07-23T23:22:23Z"
+    },
+    {
+      "id": "SBX-007",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "File download returns exact guest bytes",
+      "verifiedAt": "2026-07-23T23:22:24Z"
+    },
+    {
+      "id": "SBX-008",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "Directory creation is reflected in listing",
+      "verifiedAt": "2026-07-23T23:22:24Z"
+    },
+    {
+      "id": "SBX-009",
+      "status": "PASS",
+      "surface": "sandbox detail / metrics",
+      "detail": "Runtime metrics are sampled from the guest",
+      "verifiedAt": "2026-07-23T23:22:24Z"
+    },
+    {
+      "id": "SBX-010",
+      "status": "PASS",
+      "surface": "sandbox detail / events",
+      "detail": "Sandbox event history contains create and exec",
+      "verifiedAt": "2026-07-23T23:22:24Z"
+    },
+    {
+      "id": "SBX-011",
+      "status": "PASS",
+      "surface": "sandbox detail / SSH",
+      "detail": "SSH discovery returns host, user, key, and executable command",
+      "verifiedAt": "2026-07-23T23:22:24Z"
+    },
+    {
+      "id": "SBX-012",
+      "status": "PASS",
+      "surface": "sandbox detail / ports",
+      "detail": "Public preview port can be exposed",
+      "verifiedAt": "2026-07-23T23:22:24Z"
+    },
+    {
+      "id": "SBX-013",
+      "status": "PASS",
+      "surface": "sandbox detail / ports",
+      "detail": "Edge preview proxies to the guest service",
+      "verifiedAt": "2026-07-23T23:22:25Z"
+    },
+    {
+      "id": "SBX-014",
+      "status": "FAIL",
+      "surface": "sandbox detail / ports",
+      "detail": "Exposed port can be removed — jq: error (at <stdin>:1): Cannot iterate over null (null) ",
+      "verifiedAt": "2026-07-23T23:22:25Z"
+    },
+    {
+      "id": "SBX-015",
+      "status": "PASS",
+      "surface": "sandboxes / fork",
+      "detail": "Fork created sb-9408e086ecc5dc832a9cd8fb",
+      "verifiedAt": "2026-07-23T23:22:26Z"
+    },
+    {
+      "id": "SBX-016",
+      "status": "PASS",
+      "surface": "sandboxes / fork",
+      "detail": "Fork copies workspace content",
+      "verifiedAt": "2026-07-23T23:22:26Z"
+    },
+    {
+      "id": "SBX-017",
+      "status": "PASS",
+      "surface": "sandboxes / pause",
+      "detail": "Pause transitions runtime and desired state",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "SBX-018",
+      "status": "PASS",
+      "surface": "sandboxes / resume",
+      "detail": "Resume restores runtime execution",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "SBX-019",
+      "status": "PASS",
+      "surface": "sandbox detail / files",
+      "detail": "File and directory deletion removes guest paths",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "AGT-001",
+      "status": "FAIL",
+      "surface": "agents / deploy",
+      "detail": "Agent deployment failed",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "AGT-002",
+      "status": "FAIL",
+      "surface": "agents",
+      "detail": "Agent appears in inventory",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "AGT-003",
+      "status": "FAIL",
+      "surface": "agents / model keys",
+      "detail": "Secret metadata is readable but values are never returned — curl: (22) The requested URL returned error: 404 ",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "AGT-004",
+      "status": "FAIL",
+      "surface": "agents / model keys",
+      "detail": "Secret is injected into the agent sandbox",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "AGT-005",
+      "status": "FAIL",
+      "surface": "agents / logs",
+      "detail": "Agent lifecycle logs are available — curl: (22) The requested URL returned error: 404 ",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "AGT-006",
+      "status": "FAIL",
+      "surface": "agents / stop",
+      "detail": "Stop pauses the bound sandbox — curl: (22) The requested URL returned error: 404 ",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "AGT-007",
+      "status": "FAIL",
+      "surface": "agents / restart",
+      "detail": "Restart resumes the bound sandbox and reapplies secrets — curl: (22) The requested URL returned error: 404 ",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "AGT-008",
+      "status": "FAIL",
+      "surface": "agents / model keys",
+      "detail": "Secret rotation increments applied generation — curl: (22) The requested URL returned error: 404 ",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "EVAL-001",
+      "status": "FAIL",
+      "surface": "agents / evaluations",
+      "detail": "Eval suite creation failed",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "CON-001",
+      "status": "PARTIAL",
+      "surface": "connectors",
+      "detail": "Grant metadata persists, but this is not provider OAuth or live tool access",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "CON-002",
+      "status": "PASS",
+      "surface": "connectors",
+      "detail": "Connector grant updates persist",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "CON-003",
+      "status": "SKIP-LIVE",
+      "surface": "connectors / Composio",
+      "detail": "No COMPOSIO_API_KEY or connected account; live OAuth/tool execution cannot be verified",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "CON-004",
+      "status": "FAIL",
+      "surface": "connectors / invocation",
+      "detail": "No public connector tool-invocation endpoint is implemented despite connector:invoke scope",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "CON-005",
+      "status": "PASS",
+      "surface": "connectors",
+      "detail": "Connector grant can be revoked",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "NET-001",
+      "status": "PASS",
+      "surface": "networks",
+      "detail": "Network record created",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "NET-002",
+      "status": "PASS",
+      "surface": "networks",
+      "detail": "Sandbox attachment is persisted",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "NET-003",
+      "status": "PARTIAL",
+      "surface": "networks / data plane",
+      "detail": "Attachment is topology metadata; runtime network isolation/routing is not enforced",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "NET-004",
+      "status": "PASS",
+      "surface": "networks",
+      "detail": "Sandbox can be detached",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "STO-001",
+      "status": "PASS",
+      "surface": "storage",
+      "detail": "Storage registration persists without returning credentials",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "STO-002",
+      "status": "PASS",
+      "surface": "storage",
+      "detail": "Storage attachment is persisted",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "STO-003",
+      "status": "PARTIAL",
+      "surface": "storage / data plane",
+      "detail": "Attachment is metadata; bucket is not mounted or credential-brokered into the guest",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "STO-004",
+      "status": "PASS",
+      "surface": "storage",
+      "detail": "Storage can be detached",
+      "verifiedAt": "2026-07-23T23:22:27Z"
+    },
+    {
+      "id": "WHK-001",
+      "status": "PASS",
+      "surface": "webhooks",
+      "detail": "Webhook created and signing secret revealed once",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "WHK-002",
+      "status": "PASS",
+      "surface": "webhooks",
+      "detail": "Test delivery reaches receiver",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "WHK-003",
+      "status": "FAIL",
+      "surface": "webhooks / security",
+      "detail": "Delivery includes event and HMAC signature headers",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "AUD-001",
+      "status": "PASS",
+      "surface": "audit",
+      "detail": "Customer audit ledger records mutations",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "TEAM-001",
+      "status": "PASS",
+      "surface": "settings / team",
+      "detail": "Member invitation persists pending member",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "TEAM-002",
+      "status": "PASS",
+      "surface": "settings / team",
+      "detail": "Member role update persists",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "TEAM-003",
+      "status": "PASS",
+      "surface": "settings / team",
+      "detail": "Member removal succeeds",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "KEY-001",
+      "status": "FAIL",
+      "surface": "developer / API keys",
+      "detail": "API key creation failed",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "BILL-001",
+      "status": "PASS",
+      "surface": "settings / billing",
+      "detail": "Usage and credit meters are queryable",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "QUOTA-001",
+      "status": "FAIL",
+      "surface": "settings / quotas",
+      "detail": "Quota limits are queryable — jq: error (at <stdin>:1): Cannot index array with string \"items\" ",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "QUOTA-002",
+      "status": "FAIL",
+      "surface": "settings / quotas",
+      "detail": "Quota increase request persists",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "PROJ-001",
+      "status": "PASS",
+      "surface": "settings / project",
+      "detail": "Project update persists",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "ADM-001",
+      "status": "PASS",
+      "surface": "operator / login",
+      "detail": "Owner-only login returns a private session",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "ADM-002",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "operator session",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "ADM-003",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "operations overview",
+      "verifiedAt": "2026-07-23T23:22:28Z"
+    },
+    {
+      "id": "ADM-004",
+      "status": "FAIL",
+      "surface": "operator console",
+      "detail": "length)>0|control-plane detail — jq: error: syntax error, unexpected end of file (Unix shell quoting issues?) at <top-level>, line 1: .healthy==true and (.components                     jq: 1 compile error ",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "ADM-005",
+      "status": "FAIL",
+      "surface": "operator console",
+      "detail": "length)==1 and .items[0].healthy==true|host inventory — jq: error: syntax error, unexpected end of file (Unix shell quoting issues?) at <top-level>, line 1: (.items  jq: 1 compile error ",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "ADM-006",
+      "status": "FAIL",
+      "surface": "operator console",
+      "detail": "length)>=1|runtime inventory — jq: error: syntax error, unexpected end of file (Unix shell quoting issues?) at <top-level>, line 1: (.items  jq: 1 compile error ",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "ADM-007",
+      "status": "FAIL",
+      "surface": "operator console",
+      "detail": "length)>0|private audit ledger — jq: error: syntax error, unexpected end of file (Unix shell quoting issues?) at <top-level>, line 1: (.items  jq: 1 compile error curl: (23) Failure writing output to destination, passed 16384 returned 0 ",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "ADM-008",
+      "status": "PASS",
+      "surface": "operator console",
+      "detail": "redacted private configuration",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "ADM-009",
+      "status": "PASS",
+      "surface": "operator / data plane",
+      "detail": "Reconcile reports desired versus observed runtime",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "ADM-010",
+      "status": "PASS",
+      "surface": "operator / logout",
+      "detail": "Private session can be revoked",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "CLI-001",
+      "status": "FAIL",
+      "surface": "CLI",
+      "detail": "CLI reads the live sandbox inventory — agentpop: unknown command \"sandboxes\"; run `agentpop help` ",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "MCP-001",
+      "status": "PASS",
+      "surface": "MCP",
+      "detail": "MCP server binary exists; protocol smoke is run by scripts/smoke-mcp.sh",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "SDK-001",
+      "status": "PASS",
+      "surface": "SDKs",
+      "detail": "TypeScript and Python SDK source/artifacts are present",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "AUTH-001",
+      "status": "PARTIAL",
+      "surface": "customer authentication",
+      "detail": "Customer sign-in is a browser-local demo session, not production identity/OIDC",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "TPL-001",
+      "status": "FAIL",
+      "surface": "templates",
+      "detail": "Template build, logs, and deprecate buttons have no backing API",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "UI-001",
+      "status": "PARTIAL",
+      "surface": "UI interaction audit",
+      "detail": "Run pnpm qa:ui to exercise every route/control with browser evidence",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    },
+    {
+      "id": "FIRE-001",
+      "status": "SKIP-LIVE",
+      "surface": "Firecracker data plane",
+      "detail": "macOS has no KVM; Docker compatibility plane passed. Run on Linux/KVM for microVM proof",
+      "verifiedAt": "2026-07-23T23:22:29Z"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+apiVersion: agentpop.cloud/v1
+kind: Image
+metadata:
+  name: openclaw
+spec:
+  type: agent
+  defaultCommand: /bin/bash
+  lifecycle:
+    - persistent
+    - ephemeral
+  credentials:
+    - name: ANTHROPIC_API_KEY
+      required: false
+      description: Add at deploy time or rotate later without rebuilding.

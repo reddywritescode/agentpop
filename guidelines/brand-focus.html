@@ -1,0 +1,11 @@
+<!-- @dsCard group="Brand" viewport="700x150" name="Focus & selection" subtitle="2px ring, 2px offset · accent-subtle selection" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="card.css"></head>
+<body>
+<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+<button style="height:36px;padding:0 16px;border-radius:var(--radius-lg);border:1px solid transparent;background:var(--accent);color:var(--accent-fg);font:500 14px/22px var(--font-sans);outline:2px solid var(--ring);outline-offset:2px">Focused button</button>
+<div style="display:flex;height:36px;width:220px;align-items:center;border-radius:var(--radius-lg);border:1px solid var(--border-default);background:var(--surface-1);padding:0 12px;box-shadow:0 0 0 1px var(--surface-canvas),0 0 0 3px var(--ring);font-size:14px;color:var(--text-tertiary)">Focused input</div>
+<span style="font-size:14px"><span style="background:var(--accent-subtle-bg);color:var(--accent-subtle-text)">Selected text uses accent-subtle</span></span>
+</div>
+<div class="lbl" style="margin-top:14px">Every interactive element gets the ring on :focus-visible — no exceptions.</div>
+</body></html>

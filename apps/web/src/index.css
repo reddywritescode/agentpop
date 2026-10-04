@@ -1,0 +1,13 @@
+/*
+ * App stylesheet entry.
+ *  1. Design-system tokens + compiled component utilities (from @agentpop/ui).
+ *  2. Dashboard layout classes and marketing/auth styles (plain CSS on tokens).
+ */
+@import "@agentpop/ui/styles.css";
+@import "./styles/app.css";
+@import "./styles/marketing.css";
+@import "./styles/admin.css";
+
+#root {
+  min-height: 100vh;
+}

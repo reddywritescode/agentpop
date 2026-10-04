@@ -1,0 +1,2095 @@
+openapi: 3.1.0
+info:
+  title: AgentPop API
+  version: 0.1.0
+  description: |
+    Public control-plane API for isolated sandboxes and managed cloud agents.
+    The same contract fronts the local Docker compatibility data plane and
+    Linux Firecracker data-plane hosts.
+servers:
+  - url: https://api.agentpop.cloud
+    description: AgentPop hosted API
+  - url: http://127.0.0.1:8080
+    description: Local control plane
+security:
+  - bearerAuth: []
+paths:
+  /healthz:
+    get:
+      operationId: health
+      security: []
+      responses:
+        "200":
+          description: Control and data planes are healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+  /v1/control-plane/status:
+    get:
+      operationId: getControlPlaneStatus
+      responses:
+        "200":
+          description: Exposed control-plane topology and state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlPlaneStatus"
+  /v1/data-plane/hosts:
+    get:
+      operationId: listDataPlaneHosts
+      responses:
+        "200":
+          description: Runtime hosts visible to this control plane.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Host"
+  /v1/sandboxes:
+    get:
+      operationId: listSandboxes
+      responses:
+        "200":
+          description: Sandboxes owned by the current project.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Sandbox"
+    post:
+      operationId: createSandbox
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSandbox"
+      responses:
+        "201":
+          description: Sandbox reached the running state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sandbox"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /v1/sandboxes/{sandboxId}:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    get:
+      operationId: getSandbox
+      responses:
+        "200":
+          description: Sandbox state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sandbox"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateSandbox
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSandbox"
+      responses:
+        "200":
+          description: Updated sandbox and live runtime limits where supported.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sandbox"
+        "409":
+          description: The selected runtime requires a stop/snapshot/restore resource update.
+    delete:
+      operationId: destroySandbox
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "204":
+          description: Sandbox runtime and control-plane record were removed.
+  /v1/sandboxes/{sandboxId}/exec:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    post:
+      operationId: execSandbox
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [command]
+              properties:
+                command:
+                  type: string
+                label:
+                  type: string
+                  description: Human-readable run label shown with command output, for example `unit-tests`.
+                timeoutSeconds:
+                  type: integer
+                  minimum: 1
+                  maximum: 600
+      responses:
+        "200":
+          description: Buffered command result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecResult"
+  /v1/sandboxes/{sandboxId}/logs:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    get:
+      operationId: listSandboxLogs
+      summary: Read bounded runtime output and lifecycle logs for a sandbox
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 200
+      responses:
+        "200":
+          description: Ordered log entries. Runtime stdout and stderr are redacted against write-only agent secrets before persistence.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SandboxLogEntry"
+  /v1/sandboxes/{sandboxId}/secrets:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    get:
+      operationId: listSandboxSecrets
+      description: List configured secret names and timestamps. Secret values are never returned.
+      responses:
+        "200":
+          description: Write-only sandbox secret metadata.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SandboxSecrets" }
+    put:
+      operationId: updateSandboxSecrets
+      description: Add or rotate write-only secret values without rebuilding the image.
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [secrets]
+              properties:
+                secrets:
+                  type: object
+                  minProperties: 1
+                  additionalProperties: { type: string }
+                  writeOnly: true
+                replace: { type: boolean, default: false }
+      responses:
+        "200":
+          description: Secrets applied to a running sandbox.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SandboxSecrets" }
+        "202":
+          description: Secrets persisted and will be applied when the sandbox runs.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SandboxSecrets" }
+  /v1/sandboxes/{sandboxId}/secrets/{secretName}:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+      - name: secretName
+        in: path
+        required: true
+        schema: { type: string, pattern: "^[A-Z_][A-Z0-9_]{0,127}$" }
+    delete:
+      operationId: deleteSandboxSecret
+      description: Delete one configured secret and apply the change to the runtime.
+      responses:
+        "200":
+          description: Remaining secret metadata.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SandboxSecrets" }
+  /v1/sandboxes/{sandboxId}/files:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    get:
+      operationId: listOrDownloadSandboxFiles
+      summary: List the workspace root or download one file
+      parameters:
+        - name: path
+          in: query
+          required: false
+          description: Absolute file path under `/workspace`; omit to list the workspace root.
+          schema:
+            type: string
+            pattern: ^/workspace/.+
+      responses:
+        "200":
+          description: JSON directory entries when `path` is omitted, otherwise the raw file body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FileEntry"
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+    put:
+      operationId: uploadSandboxFile
+      summary: Upload or replace one workspace file
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - name: path
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: ^/workspace/.+
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "204":
+          description: File written.
+        "413":
+          description: File exceeds the 32 MiB direct-upload limit.
+    delete:
+      operationId: deleteSandboxFile
+      summary: Recursively remove one workspace path
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - name: path
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: ^/workspace/.+
+      responses:
+        "204":
+          description: File or directory removed.
+  /v1/sandboxes/{sandboxId}/directories:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    post:
+      operationId: createSandboxDirectory
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+                  pattern: ^/workspace/.+
+      responses:
+        "201":
+          description: Directory created.
+  /v1/sandboxes/{sandboxId}/metrics:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    get:
+      operationId: getSandboxMetrics
+      responses:
+        "200":
+          description: Live guest and cgroup resource sample.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SandboxMetrics"
+  /v1/sandboxes/{sandboxId}/events:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    get:
+      operationId: listSandboxEvents
+      responses:
+        "200":
+          description: Persisted operations for this sandbox.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, sandbox]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AuditEvent"
+                  sandbox:
+                    type: object
+  /v1/sandboxes/{sandboxId}/ssh:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    get:
+      operationId: getSandboxSSH
+      responses:
+        "200":
+          description: Exact SSH target and command.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SSHAccess"
+  /v1/sandboxes/{sandboxId}/pause:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    post:
+      operationId: pauseSandbox
+      responses:
+        "200":
+          description: Paused sandbox.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sandbox"
+  /v1/sandboxes/{sandboxId}/resume:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    post:
+      operationId: resumeSandbox
+      responses:
+        "200":
+          description: Running sandbox.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sandbox"
+  /v1/agents:
+    get:
+      operationId: listAgents
+      responses:
+        "200":
+          description: Managed agents.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Agent"
+    post:
+      operationId: createAgent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAgent"
+      responses:
+        "201":
+          description: Agent and its managed sandbox were created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+  /v1/platform/health:
+    get:
+      operationId: getPlatformHealth
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/catalog:
+    get:
+      operationId: getCatalog
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/marketplace:
+    get:
+      operationId: listMarketplace
+      description: >
+        Canonical unified catalog. Agent recipes and environment recipes both
+        build an immutable image and deploy as a sandbox.
+      parameters:
+        - name: kind
+          in: query
+          schema: { type: string, enum: [all, agent, sandbox], default: all }
+        - name: q
+          in: query
+          schema: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/marketplace/generate:
+    post:
+      operationId: generateMarketplaceRecipe
+      description: >
+        Compatibility alias for the model-backed image generator. It returns a
+        reviewable Dockerfile, manifest, README, and supporting files and does
+        not build or execute the result.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt: { type: string, minLength: 3, maxLength: 1000 }
+                kind: { type: string, enum: [agent, sandbox], default: sandbox }
+                name: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/marketplace/{packageId}:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    get:
+      operationId: getMarketplaceRecipe
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/marketplace/{packageId}/install:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    post:
+      operationId: installMarketplaceRecipe
+      description: Idempotently build a curated recipe into an immutable image.
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+        "202": { $ref: "#/components/responses/JSONResponse" }
+  /v1/marketplace/{packageId}/deploy:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    post:
+      operationId: deployMarketplaceRecipe
+      description: Deploy an installed agent or environment recipe as a sandbox.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateSandbox" }
+      responses:
+        "201":
+          description: Recipe sandbox created.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Sandbox" }
+        "409":
+          description: Recipe has not finished installing.
+  /v1/images:
+    get:
+      operationId: listImages
+      description: Canonical catalog of reusable agent and sandbox images.
+      parameters:
+        - name: kind
+          in: query
+          schema: { type: string, enum: [all, agent, sandbox], default: all }
+        - name: q
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Inspectable image catalog.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, filters]
+                properties:
+                  items: { type: array, items: { $ref: "#/components/schemas/Image" } }
+                  filters: { type: array, items: { type: string } }
+  /v1/images/generate:
+    post:
+      operationId: generateImage
+      description: |
+        Use the configured server-side model to interpret intent and generate a
+        reviewable Dockerfile, agentpop.yaml, README, declared credentials,
+        connectors, ports, and validation plan. Curated image files are sent as
+        references. Nothing builds or runs before approval, and the endpoint
+        fails closed when no planner model is configured.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt: { type: string, minLength: 3, maxLength: 1000 }
+                kind: { type: string, enum: [agent, sandbox], default: sandbox }
+                name: { type: string }
+      responses:
+        "200":
+          description: Generated image source ready for review.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Image" }
+  /v1/images/{packageId}:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    get:
+      operationId: getImage
+      responses:
+        "200":
+          description: Image source, metadata, and build state.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Image" }
+  /v1/images/{packageId}/build:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    post:
+      operationId: buildImage
+      description: Idempotently build an immutable deployable image.
+      responses:
+        "200":
+          description: Image was already ready.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Image" }
+        "202":
+          description: Image build queued or running.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Image" }
+  /v1/images/{packageId}/deploy:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    post:
+      operationId: deployImage
+      description: Deploy a built image as a persistent or ephemeral isolated sandbox. Credentials are optional and can be added later.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateSandbox" }
+      responses:
+        "201":
+          description: Image deployed.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Sandbox" }
+        "409": { description: Image has not finished building. }
+  /v1/images/{packageId}/fork:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    post:
+      operationId: forkImage
+      description: Create an editable project-owned image without modifying the source image.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, pattern: "^[a-z0-9][a-z0-9-]{0,31}$" }
+                definition: { type: string }
+                build: { type: boolean, default: false }
+      responses:
+        "201": { $ref: "#/components/responses/JSONResponse" }
+        "202": { $ref: "#/components/responses/JSONResponse" }
+  /v1/agent-catalog:
+    get:
+      operationId: listAgentCatalog
+      description: >
+        Curated agent packages (marketplace). Each package embeds a
+        reproducible template definition; install state reflects the live
+        template build backing it.
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/agent-catalog/{packageId}:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    get:
+      operationId: getAgentPackage
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/agent-catalog/{packageId}/install:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    post:
+      operationId: installAgentPackage
+      description: >
+        Idempotently creates the package's backing template and starts a real
+        image build. Returns 200 when already installed, 202 while building.
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+        "202": { $ref: "#/components/responses/JSONResponse" }
+  /v1/sandbox-catalog:
+    get:
+      operationId: listSandboxCatalog
+      description: >
+        Curated preloaded sandbox images (development environments). Same
+        package/install semantics as the agent catalog.
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/sandbox-catalog/{packageId}:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    get:
+      operationId: getSandboxImage
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/sandbox-catalog/{packageId}/install:
+    parameters:
+      - $ref: "#/components/parameters/AgentPackageId"
+    post:
+      operationId: installSandboxImage
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+        "202": { $ref: "#/components/responses/JSONResponse" }
+  /v1/templates:
+    get:
+      operationId: listTemplates
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    post:
+      operationId: createTemplate
+      description: >
+        Register a template from a single-stage Dockerfile definition
+        (one FROM naming an agentpop/* base image plus RUN steps).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, definition]
+              properties:
+                name: { type: string, pattern: "^[a-z0-9](?:[a-z0-9-]{0,30}[a-z0-9])?$" }
+                description: { type: string }
+                definition: { type: string }
+      responses:
+        "201": { $ref: "#/components/responses/JSONResponse" }
+        "400": { description: Invalid name or unsupported definition instruction. }
+        "409": { description: A template with this name already exists. }
+  /v1/templates/{templateId}:
+    parameters:
+      - $ref: "#/components/parameters/TemplateId"
+    get:
+      operationId: getTemplate
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    delete:
+      operationId: deleteTemplate
+      description: Deletes the template, its build history, and its committed image.
+      responses:
+        "204": { description: Template deleted. }
+        "409": { description: Sandboxes still use the template image or a build is running. }
+  /v1/templates/{templateId}/builds:
+    parameters:
+      - $ref: "#/components/parameters/TemplateId"
+    post:
+      operationId: buildTemplate
+      description: >
+        Starts an asynchronous build. Steps run inside a data-plane build
+        sandbox; on success the sandbox is committed into an immutable image
+        and the template version advances.
+      responses:
+        "202": { $ref: "#/components/responses/JSONResponse" }
+        "409": { description: "Build already in progress, template deprecated, or built-in." }
+    get:
+      operationId: listTemplateBuilds
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/template-builds/{buildId}:
+    parameters:
+      - $ref: "#/components/parameters/TemplateBuildId"
+    get:
+      operationId: getTemplateBuild
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/template-builds/{buildId}/logs:
+    parameters:
+      - $ref: "#/components/parameters/TemplateBuildId"
+    get:
+      operationId: getTemplateBuildLogs
+      description: Persisted per-step build logs (system, stdout, and stderr streams).
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/templates/{templateId}/deprecate:
+    parameters:
+      - $ref: "#/components/parameters/TemplateId"
+    post:
+      operationId: deprecateTemplate
+      description: >
+        Blocks new sandboxes from using the template while existing runtimes
+        keep running.
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+        "409": { description: Built-in templates cannot be deprecated. }
+  /v1/templates/{templateId}/restore:
+    parameters:
+      - $ref: "#/components/parameters/TemplateId"
+    post:
+      operationId: restoreTemplate
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/sandboxes/{sandboxId}:fork:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    post:
+      operationId: forkSandbox
+      responses:
+        "201":
+          description: Forked sandbox. The local Docker plane copies `/workspace`.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Sandbox" }
+  /v1/sandboxes/{sandboxId}/ports:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    post:
+      operationId: exposeSandboxPort
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [port, mode]
+              properties:
+                port: { type: integer, minimum: 1, maximum: 65535 }
+                mode: { type: string, enum: [public, organization, signed-link] }
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/sandboxes/{sandboxId}/ports/{port}:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+      - name: port
+        in: path
+        required: true
+        schema: { type: integer, minimum: 1, maximum: 65535 }
+    delete:
+      operationId: removeSandboxPort
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/agents/{name}:stop:
+    parameters:
+      - $ref: "#/components/parameters/AgentName"
+    post:
+      operationId: stopAgent
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/agents/{name}:restart:
+    parameters:
+      - $ref: "#/components/parameters/AgentName"
+    post:
+      operationId: restartAgent
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/agents/{name}/logs:
+    parameters:
+      - $ref: "#/components/parameters/AgentName"
+    get:
+      operationId: getAgentLogs
+      responses:
+        "200":
+          description: Persisted agent lifecycle log messages.
+          content:
+            application/json:
+              schema: { type: array, items: { type: string } }
+  /v1/agents/{name}/secrets:
+    parameters:
+      - $ref: "#/components/parameters/AgentName"
+    get:
+      operationId: listAgentSecrets
+      description: Returns configured environment-variable names and application state. Secret values are never returned.
+      responses:
+        "200":
+          description: Redacted agent secret metadata.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AgentSecrets" }
+    put:
+      operationId: updateAgentSecrets
+      description: Adds or rotates write-only per-agent environment secrets.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [secrets]
+              properties:
+                secrets:
+                  type: object
+                  maxProperties: 64
+                  additionalProperties:
+                    type: string
+                    minLength: 1
+                replace:
+                  type: boolean
+                  default: false
+      responses:
+        "200":
+          description: Secrets stored and applied to the running agent.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AgentSecrets" }
+        "202":
+          description: Secrets stored and pending application on agent restart.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AgentSecrets" }
+  /v1/agents/{name}:
+    parameters:
+      - $ref: "#/components/parameters/AgentName"
+    delete:
+      operationId: deleteAgent
+      description: Deletes the agent, its managed sandbox, and its encrypted secret record.
+      responses:
+        "204":
+          description: Agent deleted.
+  /v1/agents/{name}/secrets/{key}:
+    parameters:
+      - $ref: "#/components/parameters/AgentName"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[A-Z_][A-Z0-9_]{0,127}$
+    delete:
+      operationId: deleteAgentSecret
+      description: Removes one write-only environment secret from an agent.
+      responses:
+        "200":
+          description: Secret removed and runtime updated.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AgentSecrets" }
+        "202":
+          description: Removal stored and pending application on agent restart.
+  /v1/agents/{name}/eval-suites:
+    parameters:
+      - $ref: "#/components/parameters/AgentName"
+    get:
+      operationId: listAgentEvalSuites
+      responses:
+        "200":
+          description: Open AgentOps-compatible suites registered for this agent.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/EvalSuite" }
+    post:
+      operationId: createAgentEvalSuite
+      description: |
+        Registers a versioned eval scenario. The runner command executes inside
+        the agent sandbox and receives each test input as JSON on stdin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateEvalSuite" }
+      responses:
+        "201":
+          description: Eval suite registered.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EvalSuite" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /v1/agents/{name}/eval-runs:
+    parameters:
+      - $ref: "#/components/parameters/AgentName"
+    get:
+      operationId: listAgentEvalRuns
+      responses:
+        "200":
+          description: Saved runs across all suites for this agent.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/EvalRun" }
+  /v1/eval-suites/{evalSuiteId}:
+    parameters:
+      - $ref: "#/components/parameters/EvalSuiteId"
+    get:
+      operationId: getEvalSuite
+      responses:
+        "200":
+          description: Eval suite.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EvalSuite" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      operationId: deleteEvalSuite
+      description: Deletes the suite and its saved run history.
+      responses:
+        "204": { description: Eval suite deleted. }
+  /v1/eval-suites/{evalSuiteId}/runs:
+    parameters:
+      - $ref: "#/components/parameters/EvalSuiteId"
+    get:
+      operationId: listEvalSuiteRuns
+      responses:
+        "200":
+          description: Saved runs for this suite.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/EvalRun" }
+    post:
+      operationId: runEvalSuite
+      description: |
+        Runs every enabled case in the agent's sandbox. Deterministic checks run
+        locally; optional LLM rubrics use the model key already scoped to that
+        agent and never return the key to the control plane or SDK.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                environment:
+                  type: string
+                  enum: [ci, sandbox, staging]
+                  default: sandbox
+      responses:
+        "201":
+          description: Completed eval run with per-case checks and metrics.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EvalRun" }
+        "409":
+          description: The selected agent is stopped or unavailable.
+  /v1/eval-runs/{evalRunId}:
+    parameters:
+      - $ref: "#/components/parameters/EvalRunId"
+    get:
+      operationId: getEvalRun
+      responses:
+        "200":
+          description: Persisted eval result.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EvalRun" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /v1/connectors:
+    get:
+      operationId: listConnectors
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/connectors/catalog:
+    get:
+      operationId: listConnectorCatalog
+      description: Search the live Composio toolkit catalog through the server-side broker.
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/connectors/{connectorId}/authorize:
+    parameters:
+      - $ref: "#/components/parameters/ConnectorId"
+    post:
+      operationId: authorizeConnector
+      description: Create a short-lived Composio Connect Link for real provider OAuth.
+      responses:
+        "201":
+          description: OAuth authorization was initiated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConnectorAuthorization"
+        "503": { $ref: "#/components/responses/BadRequest" }
+  /v1/connectors/{connectorId}/tools:
+    parameters:
+      - $ref: "#/components/parameters/ConnectorId"
+    get:
+      operationId: listConnectorTools
+      description: List real Composio tools for a connector toolkit.
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/connectors/composio/callback:
+    get:
+      operationId: completeConnectorAuthorization
+      security: []
+      description: Composio OAuth callback protected by a single-use opaque state value.
+      parameters:
+        - { name: state, in: query, required: true, schema: { type: string } }
+        - { name: status, in: query, required: true, schema: { type: string } }
+        - { name: connected_account_id, in: query, required: false, schema: { type: string } }
+      responses:
+        "302": { description: Redirect to the connector dashboard. }
+  /v1/connectors/{connectorId}/tools/{toolSlug}:
+    parameters:
+      - $ref: "#/components/parameters/ConnectorId"
+      - name: toolSlug
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      operationId: invokeConnectorTool
+      description: Invoke one granted Composio tool; the platform key and provider token remain broker-side.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConnectorInvocationRequest"
+      responses:
+        "200":
+          description: Provider tool result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConnectorInvocation"
+        "403": { $ref: "#/components/responses/BadRequest" }
+  /v1/connectors/{connectorId}/connections:
+    parameters:
+      - $ref: "#/components/parameters/ConnectorId"
+    post:
+      operationId: connectConnector
+      deprecated: true
+      description: Compatibility alias for authorizeConnector; it no longer fabricates a local connection.
+      responses:
+        "201":
+          description: OAuth authorization was initiated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConnectorAuthorization"
+    patch:
+      operationId: updateConnectorConnection
+      requestBody: { $ref: "#/components/requestBodies/ConnectorConnection" }
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    delete:
+      operationId: revokeConnectorConnection
+      responses:
+        "204": { description: Connection and grants revoked. }
+  /v1/networks:
+    get:
+      operationId: listNetworks
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    post:
+      operationId: createNetwork
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                cidr: { type: string }
+                region: { type: string }
+      responses:
+        "201": { $ref: "#/components/responses/JSONResponse" }
+  /v1/networks/{networkId}:
+    parameters:
+      - $ref: "#/components/parameters/NetworkId"
+    delete:
+      operationId: deleteNetwork
+      responses:
+        "204": { description: Empty network record deleted. }
+  /v1/networks/{networkId}/members:
+    parameters:
+      - $ref: "#/components/parameters/NetworkId"
+    post:
+      operationId: attachNetworkSandbox
+      requestBody: { $ref: "#/components/requestBodies/SandboxAttachment" }
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/networks/{networkId}/members/{sandboxId}:
+    parameters:
+      - $ref: "#/components/parameters/NetworkId"
+      - $ref: "#/components/parameters/SandboxId"
+    delete:
+      operationId: detachNetworkSandbox
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/storages:
+    get:
+      operationId: listStorages
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    post:
+      operationId: registerStorage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterStorage" }
+      responses:
+        "201":
+          description: Storage registered; credentials are encrypted and omitted from the response.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/GenericObject" }
+  /v1/storages/{storageId}:
+    parameters:
+      - $ref: "#/components/parameters/StorageId"
+    delete:
+      operationId: deleteStorage
+      responses:
+        "204": { description: Unattached storage registration deleted. }
+  /v1/storages/{storageId}/attachments:
+    parameters:
+      - $ref: "#/components/parameters/StorageId"
+    post:
+      operationId: attachStorage
+      requestBody: { $ref: "#/components/requestBodies/SandboxAttachment" }
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/storages/{storageId}/attachments/{sandboxId}:
+    parameters:
+      - $ref: "#/components/parameters/StorageId"
+      - $ref: "#/components/parameters/SandboxId"
+    delete:
+      operationId: detachStorage
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/webhooks:
+    get:
+      operationId: listWebhooks
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    post:
+      operationId: createWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, events]
+              properties:
+                url: { type: string, format: uri }
+                events: { type: array, minItems: 1, items: { type: string } }
+      responses:
+        "201":
+          description: Webhook created; the signing secret is returned once.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/GenericObject" }
+  /v1/webhooks/{webhookId}:
+    parameters:
+      - $ref: "#/components/parameters/WebhookId"
+    delete:
+      operationId: deleteWebhook
+      responses:
+        "204": { description: Webhook deleted. }
+  /v1/webhooks/{webhookId}/test:
+    parameters:
+      - $ref: "#/components/parameters/WebhookId"
+    post:
+      operationId: testWebhook
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/audit-events:
+    get:
+      operationId: listAuditEvents
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/members:
+    get:
+      operationId: listMembers
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    post:
+      operationId: inviteMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, role]
+              properties:
+                email: { type: string, format: email }
+                role: { type: string, enum: [Owner, Admin, Developer, Viewer] }
+      responses:
+        "201": { $ref: "#/components/responses/JSONResponse" }
+  /v1/members/{email}:
+    parameters:
+      - name: email
+        in: path
+        required: true
+        schema: { type: string, format: email }
+    patch:
+      operationId: updateMember
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    delete:
+      operationId: removeMember
+      responses:
+        "204": { description: Non-owner member removed. }
+  /v1/api-keys:
+    get:
+      operationId: listAPIKeys
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    post:
+      operationId: createAPIKey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, scopes]
+              properties:
+                name: { type: string }
+                scopes: { type: array, minItems: 1, items: { type: string } }
+      responses:
+        "201":
+          description: Hashed API key created; the plaintext secret is returned once.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/GenericObject" }
+  /v1/api-keys/{keyId}:
+    parameters:
+      - name: keyId
+        in: path
+        required: true
+        schema: { type: string }
+    delete:
+      operationId: revokeAPIKey
+      responses:
+        "204": { description: API key revoked. }
+  /v1/usage:
+    get:
+      operationId: getUsage
+      deprecated: true
+      description: Compatibility-only local diagnostics; hosted billing does not use customer credits.
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/subscription:
+    get:
+      operationId: getSubscription
+      description: Read the fixed AgentPop Pro $20/month hosted plan.
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/subscription/checkout:
+    post:
+      operationId: createSubscriptionCheckout
+      description: Return the configured hosted checkout URL.
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+        "501":
+          description: Hosted billing provider is not configured.
+  /v1/quotas:
+    get:
+      operationId: getQuotas
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/quota-requests:
+    post:
+      operationId: requestQuotaIncrease
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string }
+      responses:
+        "201": { $ref: "#/components/responses/JSONResponse" }
+  /v1/billing/credits:
+    post:
+      operationId: addLocalCredits
+      deprecated: true
+      description: Legacy local simulator only. The hosted product is a fixed subscription and exposes no credits.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount: { type: number, exclusiveMinimum: 0 }
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+  /v1/project:
+    get:
+      operationId: getProject
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    patch:
+      operationId: updateProject
+      responses:
+        "200": { $ref: "#/components/responses/JSONResponse" }
+    delete:
+      operationId: deleteProject
+      responses:
+        "204": { description: Project resources and local records deleted. }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    SandboxId:
+      name: sandboxId
+      in: path
+      required: true
+      schema:
+        type: string
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema:
+        type: string
+        maxLength: 200
+    AgentName:
+      name: name
+      in: path
+      required: true
+      schema: { type: string }
+    EvalSuiteId:
+      name: evalSuiteId
+      in: path
+      required: true
+      schema: { type: string }
+    EvalRunId:
+      name: evalRunId
+      in: path
+      required: true
+      schema: { type: string }
+    ConnectorId:
+      name: connectorId
+      in: path
+      required: true
+      schema: { type: string }
+    NetworkId:
+      name: networkId
+      in: path
+      required: true
+      schema: { type: string }
+    AgentPackageId:
+      name: packageId
+      in: path
+      required: true
+      schema: { type: string }
+    TemplateId:
+      name: templateId
+      description: Template id (tpl-…) or unique template name.
+      in: path
+      required: true
+      schema: { type: string }
+    TemplateBuildId:
+      name: buildId
+      in: path
+      required: true
+      schema: { type: string }
+    StorageId:
+      name: storageId
+      in: path
+      required: true
+      schema: { type: string }
+    WebhookId:
+      name: webhookId
+      in: path
+      required: true
+      schema: { type: string }
+  requestBodies:
+    SandboxAttachment:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [sandboxId]
+            properties:
+              sandboxId: { type: string }
+    ConnectorConnection:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              account: { type: string }
+              actions: { type: array, items: { type: string } }
+  responses:
+    JSONResponse:
+      description: JSON resource or collection response.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/GenericObject" }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    GenericObject:
+      type: object
+      additionalProperties: true
+    ImageCredential:
+      type: object
+      required: [name, label, required]
+      properties:
+        name: { type: string }
+        label: { type: string }
+        provider: { type: string }
+        required:
+          type: boolean
+          description: False means the image can deploy before this value is configured.
+        description: { type: string }
+    ImageFile:
+      type: object
+      required: [path, content]
+      properties:
+        path: { type: string }
+        language: { type: string }
+        content: { type: string }
+    Image:
+      type: object
+      required: [id, kind, name, tagline, definition, credentials, files, persistenceModes, programmable, forkable]
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [agent, sandbox] }
+        name: { type: string }
+        tagline: { type: string }
+        description: { type: string }
+        category: { type: string }
+        useCases: { type: array, items: { type: string } }
+        definition:
+          type: string
+          description: Reviewable Dockerfile-subset source.
+        credentials: { type: array, items: { $ref: "#/components/schemas/ImageCredential" } }
+        files: { type: array, items: { $ref: "#/components/schemas/ImageFile" } }
+        persistenceModes: { type: array, items: { type: string, enum: [persistent, ephemeral] } }
+        defaultCommand: { type: string }
+        requiredConnectors: { type: array, items: { type: string } }
+        ports:
+          type: array
+          items: { type: integer, minimum: 1, maximum: 65535 }
+        programmable: { type: boolean }
+        forkable: { type: boolean }
+        sourceUrl: { type: string, format: uri }
+        license: { type: string }
+        installed: { type: boolean }
+        installState: { type: string }
+        imageRef: { type: string }
+        templateId: { type: string }
+        generatedBy: { type: string }
+    SandboxSecret:
+      type: object
+      required: [name, configured]
+      properties:
+        name: { type: string }
+        configured: { type: boolean }
+        updatedAt: { type: string, format: date-time }
+    SandboxSecrets:
+      type: object
+      required: [items, status]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/SandboxSecret" } }
+        status: { type: string, enum: [not_configured, applied] }
+        updatedAt: { type: string, format: date-time }
+    ConnectorAuthorization:
+      type: object
+      required: [pendingId, authorizationUrl, expiresInSeconds]
+      properties:
+        pendingId: { type: string }
+        authorizationUrl: { type: string, format: uri }
+        expiresInSeconds: { type: integer }
+    ConnectorInvocationRequest:
+      type: object
+      required: [arguments]
+      properties:
+        arguments: { type: object, additionalProperties: true }
+        thought: { type: string }
+        currentStep: { type: string }
+        currentStepMetric: { type: string }
+        agent:
+          type: string
+          description: Optional agent name; when present its connector grant is enforced.
+    ConnectorInvocation:
+      type: object
+      required: [toolkit, toolSlug, result]
+      properties:
+        toolkit: { type: string }
+        toolSlug: { type: string }
+        result: {}
+    UpdateSandbox:
+      type: object
+      minProperties: 1
+      properties:
+        name: { type: string }
+        vcpu: { type: number, minimum: 0.25, maximum: 16 }
+        memoryMb: { type: integer, minimum: 256, maximum: 32768 }
+        publicWeb: { type: boolean }
+        pauseWhenIdle: { type: boolean }
+        idleTimeoutSec: { type: integer, minimum: 0 }
+        ttlSeconds: { type: integer, minimum: 0 }
+        allowedEgress: { type: array, items: { type: string } }
+        environment: { type: object, additionalProperties: { type: string } }
+    RegisterStorage:
+      type: object
+      required: [name, endpoint, bucket]
+      properties:
+        name: { type: string }
+        endpoint: { type: string, format: uri }
+        bucket: { type: string }
+        region: { type: string }
+        pathStyle: { type: boolean }
+        accessKey: { type: string, writeOnly: true }
+        secretKey: { type: string, writeOnly: true }
+    FileEntry:
+      type: object
+      required: [name, size, mtime]
+      properties:
+        name:
+          type: string
+        dir:
+          type: boolean
+          default: false
+        size:
+          type: string
+        mtime:
+          type: string
+    SandboxMetrics:
+      type: object
+      required: [cpuLoad, cpuPercent, memoryUsedMb, memoryTotalMb, diskUsedMb, diskTotalMb, networkRxBytes, networkTxBytes, processCount, sampledAt]
+      properties:
+        cpuLoad: { type: number }
+        cpuPercent: { type: number, minimum: 0, maximum: 100 }
+        memoryUsedMb: { type: number }
+        memoryTotalMb: { type: number }
+        diskUsedMb: { type: number }
+        diskTotalMb: { type: number }
+        networkRxBytes: { type: number }
+        networkTxBytes: { type: number }
+        processCount: { type: integer }
+        sampledAt: { type: string, format: date-time }
+    SandboxLogEntry:
+      type: object
+      required: [id, sandboxId, source, stream, message, createdAt]
+      properties:
+        id: { type: string }
+        sandboxId: { type: string }
+        runId: { type: string }
+        label: { type: string }
+        source: { type: string, enum: [exec, control-plane] }
+        stream: { type: string, enum: [stdout, stderr, system, event] }
+        message: { type: string }
+        exitCode: { type: integer }
+        durationMs: { type: integer, minimum: 0 }
+        createdAt: { type: string, format: date-time }
+    AuditEvent:
+      type: object
+      required: [id, action, actor, resource, resourceId, result, createdAt]
+      properties:
+        id: { type: string }
+        action: { type: string }
+        actor: { type: string }
+        resource: { type: string }
+        resourceId: { type: string }
+        result: { type: string }
+        metadata: { type: object, additionalProperties: true }
+        createdAt: { type: string, format: date-time }
+    Error:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    SandboxStatus:
+      type: string
+      enum: [queued, provisioning, running, pausing, paused, resuming, deleting, deleted, failed]
+    SSHAccess:
+      type: object
+      required: [host, port, user, command]
+      properties:
+        host:
+          type: string
+        port:
+          type: integer
+        user:
+          type: string
+        privateKeyPath:
+          type: string
+        command:
+          type: string
+        hostCommand:
+          type: string
+    RuntimeSandbox:
+      type: object
+      required: [id, runtimeId, runtimeName, driver, status]
+      properties:
+        id:
+          type: string
+        runtimeId:
+          type: string
+        runtimeName:
+          type: string
+        driver:
+          type: string
+        status:
+          $ref: "#/components/schemas/SandboxStatus"
+        privateIp:
+          type: string
+        ssh:
+          $ref: "#/components/schemas/SSHAccess"
+        startedAt:
+          type: string
+          format: date-time
+    Sandbox:
+      type: object
+      required:
+        [id, projectId, name, status, desiredStatus, generation, observedGeneration, image, region, vcpu, memoryMb, diskGb, publicWeb, pauseWhenIdle, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        projectId:
+          type: string
+        kind:
+          type: string
+          enum: [agent, sandbox]
+          default: sandbox
+        recipeId:
+          type: string
+        name:
+          type: string
+        status:
+          $ref: "#/components/schemas/SandboxStatus"
+        desiredStatus:
+          $ref: "#/components/schemas/SandboxStatus"
+        generation:
+          type: integer
+        observedGeneration:
+          type: integer
+        image:
+          type: string
+        region:
+          type: string
+        vcpu:
+          type: number
+        memoryMb:
+          type: integer
+        diskGb:
+          type: integer
+        publicWeb:
+          type: boolean
+        pauseWhenIdle:
+          type: boolean
+        idleTimeoutSec:
+          type: integer
+        ttlSeconds:
+          type: integer
+        lifecycle:
+          type: string
+          enum: [persistent, ephemeral]
+        allowedEgress:
+          type: array
+          items:
+            type: string
+        environment:
+          type: object
+          additionalProperties:
+            type: string
+        secrets:
+          type: object
+          writeOnly: true
+          description: Encrypted write-only environment values; responses contain names only.
+          additionalProperties:
+            type: string
+        hostId:
+          type: string
+        runtime:
+          $ref: "#/components/schemas/RuntimeSandbox"
+        error:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateSandbox:
+      type: object
+      properties:
+        name:
+          type: string
+          pattern: "^[a-z0-9][a-z0-9-]{0,20}[a-z0-9]$"
+        projectId:
+          type: string
+        image:
+          type: string
+          default: agentpop/devbox:local
+        region:
+          type: string
+          default: local
+        vcpu:
+          type: number
+          minimum: 0.25
+          maximum: 16
+          default: 1
+        memoryMb:
+          type: integer
+          minimum: 256
+          maximum: 32768
+          default: 1024
+        diskGb:
+          type: integer
+          minimum: 1
+          default: 10
+        publicWeb:
+          type: boolean
+        pauseWhenIdle:
+          type: boolean
+        idleTimeoutSec:
+          type: integer
+        ttlSeconds:
+          type: integer
+        lifecycle:
+          type: string
+          enum: [persistent, ephemeral]
+          default: persistent
+        allowedEgress:
+          type: array
+          items:
+            type: string
+        environment:
+          type: object
+          additionalProperties:
+            type: string
+        secrets:
+          type: object
+          writeOnly: true
+          additionalProperties:
+            type: string
+    ExecResult:
+      type: object
+      required: [exitCode, stdout, stderr, durationMs, startedAt, finishedAt]
+      properties:
+        exitCode:
+          type: integer
+        stdout:
+          type: string
+        stderr:
+          type: string
+        durationMs:
+          type: integer
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+    Host:
+      type: object
+      required: [id, name, region, driver, os, architecture, healthy, kvmAvailable, capacity, updatedAt]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        region:
+          type: string
+        driver:
+          type: string
+        os:
+          type: string
+        architecture:
+          type: string
+        healthy:
+          type: boolean
+        kvmAvailable:
+          type: boolean
+        firecrackerVersion:
+          type: string
+        message:
+          type: string
+        sshCommand:
+          type: string
+        capacity:
+          type: object
+          additionalProperties: true
+        updatedAt:
+          type: string
+          format: date-time
+    ControlPlaneStatus:
+      type: object
+      additionalProperties: true
+    Agent:
+      type: object
+      required: [id, name, status, sandboxId, template, model, secretNames, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        status: { type: string }
+        sandboxId: { type: string }
+        template: { type: string }
+        model: { type: string }
+        connectors:
+          type: array
+          items: { type: string }
+        secretNames:
+          type: array
+          description: Configured write-only environment names. Values are never returned.
+          items: { type: string }
+        secretsGeneration: { type: integer, format: int64 }
+        appliedSecretsGeneration: { type: integer, format: int64 }
+        secretsUpdatedAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        lastMessage: { type: string }
+    CreateAgent:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        template:
+          type: string
+        model:
+          type: string
+        connectors:
+          type: array
+          items:
+            type: string
+        vcpu:
+          type: number
+        memoryMb:
+          type: integer
+        diskGb:
+          type: integer
+        environment:
+          type: object
+          additionalProperties:
+            type: string
+        secrets:
+          type: object
+          description: Write-only environment variables encrypted by the control plane and never returned.
+          maxProperties: 64
+          additionalProperties:
+            type: string
+            minLength: 1
+    AgentSecrets:
+      type: object
+      required: [items, status, generation, appliedGeneration]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required: [name, configured]
+            properties:
+              name: { type: string }
+              configured: { type: boolean, const: true }
+              updatedAt: { type: string, format: date-time }
+        status:
+          type: string
+          enum: [not_configured, pending, applied]
+        generation: { type: integer, format: int64 }
+        appliedGeneration: { type: integer, format: int64 }
+        updatedAt: { type: string, format: date-time }
+    EvalRunner:
+      type: object
+      required: [type, command]
+      properties:
+        type:
+          type: string
+          const: command
+        command:
+          type: string
+          description: Runs in the agent sandbox and reads one JSON input from stdin.
+          maxLength: 8192
+        timeoutSeconds:
+          type: integer
+          minimum: 1
+          maximum: 300
+          default: 60
+        judgeProvider:
+          type: string
+          enum: [auto, openai, anthropic]
+        judgeModel:
+          type: string
+    EvalCase:
+      type: object
+      required: [id, input, assert]
+      properties:
+        id: { type: string }
+        input:
+          type: object
+          additionalProperties: true
+        assert:
+          type: object
+          description: |
+            Open AgentOps assertions including tools_called,
+            tools_not_called, approval_required_for, tool_modes, limits,
+            metrics, business_metrics, privacy, secrets, and final_answer.
+          additionalProperties: true
+        judges:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        tags:
+          type: array
+          items: { type: string }
+        enabled: { type: boolean }
+    CreateEvalSuite:
+      type: object
+      required: [scenario, runner, tests]
+      properties:
+        version:
+          type: integer
+          const: 1
+          default: 1
+        scenario:
+          type: string
+          pattern: "^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$"
+        description: { type: string }
+        runner: { $ref: "#/components/schemas/EvalRunner" }
+        gate:
+          type: object
+          properties:
+            minScore: { type: number, minimum: 0, maximum: 1, default: 1 }
+        tests:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items: { $ref: "#/components/schemas/EvalCase" }
+        source: { type: string, default: agentpop }
+        generated: { type: boolean }
+        review_required: { type: boolean }
+        generation:
+          type: object
+          additionalProperties: true
+        check_profile:
+          type: object
+          additionalProperties: true
+    EvalSuite:
+      allOf:
+        - $ref: "#/components/schemas/CreateEvalSuite"
+        - type: object
+          required: [id, agentId, agent, createdAt, updatedAt]
+          properties:
+            id: { type: string }
+            agentId: { type: string }
+            agent: { type: string }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+    EvalCheck:
+      type: object
+      required: [name, checkType, passed]
+      properties:
+        name: { type: string }
+        checkType: { type: string, enum: [deterministic, judge_based] }
+        passed: { type: boolean }
+        skipped: { type: boolean }
+        expected: {}
+        actual: {}
+        reason: { type: string }
+    EvalCaseResult:
+      type: object
+      required: [id, passed, score, output, exitCode, durationMs, checks]
+      properties:
+        id: { type: string }
+        passed: { type: boolean }
+        score: { type: number, minimum: 0, maximum: 1 }
+        output: { type: string }
+        error: { type: string }
+        exitCode: { type: integer }
+        durationMs: { type: integer }
+        checks:
+          type: array
+          items: { $ref: "#/components/schemas/EvalCheck" }
+        blocking:
+          type: array
+          items: { type: string }
+        metrics:
+          type: object
+          additionalProperties: true
+    EvalRun:
+      type: object
+      required: [id, suiteId, scenario, agentId, agent, status, environment, score, minScore, passed, cases, metrics, startedAt]
+      properties:
+        id: { type: string }
+        suiteId: { type: string }
+        scenario: { type: string }
+        agentId: { type: string }
+        agent: { type: string }
+        status: { type: string, enum: [running, completed] }
+        environment: { type: string, enum: [ci, sandbox, staging] }
+        score: { type: number, minimum: 0, maximum: 1 }
+        minScore: { type: number, minimum: 0, maximum: 1 }
+        passed: { type: boolean }
+        blocking:
+          type: array
+          items: { type: string }
+        cases:
+          type: array
+          items: { $ref: "#/components/schemas/EvalCaseResult" }
+        metrics:
+          type: object
+          additionalProperties: true
+        startedAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time }

@@ -1,0 +1,8 @@
+{
+  "name": "agentpop",
+  "version": "0.1.0",
+  "description": "Create, inspect, and operate isolated AgentPop cloud sandboxes through the AgentPop MCP server.",
+  "author": {
+    "name": "AgentPop contributors"
+  }
+}

@@ -1,0 +1,10 @@
+{"id":"FIRE-HOST","status":"PASS","surface":"firecracker-live","detail":"Host agent reports healthy Firecracker driver with KVM","verifiedAt":"2026-07-24T07:50:09Z"}
+{"id":"FIRE-SBX","status":"PASS","surface":"firecracker-live","detail":"microVM booted to running: sb-952babab3ead1a81185904fc","verifiedAt":"2026-07-24T07:50:16Z"}
+{"id":"FIRE-EXEC","status":"PASS","surface":"firecracker-live","detail":"Exec inside the guest over the data plane","verifiedAt":"2026-07-24T07:50:16Z"}
+{"id":"FIRE-FILE","status":"PASS","surface":"firecracker-live","detail":"Guest file round-trip is byte-exact","verifiedAt":"2026-07-24T07:50:16Z"}
+{"id":"FIRE-PAUSE","status":"PASS","surface":"firecracker-live","detail":"Pause and resume through the Firecracker /vm API","verifiedAt":"2026-07-24T07:50:16Z"}
+{"id":"FIRE-FORK","status":"PASS","surface":"firecracker-live","detail":"Fork booted and inherited the workspace","verifiedAt":"2026-07-24T07:50:24Z"}
+{"id":"FIRE-TPL-BUILD","status":"PASS","surface":"firecracker-live","detail":"Template built and rootfs committed on Firecracker: agentpop/tpl-fire-tpl:v1","verifiedAt":"2026-07-24T07:50:33Z"}
+{"id":"FIRE-TPL-BOOT","status":"PASS","surface":"firecracker-live","detail":"microVM boots from committed template rootfs with build artifact present","verifiedAt":"2026-07-24T07:50:41Z"}
+{"id":"FIRE-TPL-DEP","status":"PASS","surface":"firecracker-live","detail":"Deprecation blocks new microVMs (409); existing one kept running","verifiedAt":"2026-07-24T07:50:41Z"}
+{"id":"FIRE-TPL-RM","status":"PASS","surface":"firecracker-live","detail":"Template delete removes the committed rootfs snapshot","verifiedAt":"2026-07-24T07:50:42Z"}

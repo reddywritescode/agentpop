@@ -1,0 +1,58 @@
+<!-- @dsCard group="Dashboard" viewport="1440x900" name="Dashboard" subtitle="Interactive end-to-end: overview, sandboxes + detail/terminal, agents, connectors, resources, developer, settings" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentPop — Dashboard</title>
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="kit.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="data.js"></script>
+<script src="store.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="Shell.jsx"></script>
+<script type="text/babel" src="CreateSandboxSheet.jsx"></script>
+<script type="text/babel" src="SandboxesScreen.jsx"></script>
+<script type="text/babel" src="SandboxDetailScreen.jsx"></script>
+<script type="text/babel" src="OverviewScreen.jsx"></script>
+<script type="text/babel" src="AgentsScreen.jsx"></script>
+<script type="text/babel" src="ConnectorsScreen.jsx"></script>
+<script type="text/babel" src="DeveloperScreen.jsx"></script>
+<script type="text/babel" src="ResourceScreens.jsx"></script>
+<script type="text/babel" src="SettingsScreen.jsx"></script>
+<script type="text/babel">
+function App() {
+  const saved = (() => { try { return JSON.parse(localStorage.getItem("agentpop-kit-view")) || {}; } catch (e) { return {}; } })();
+  const legacy = localStorage.getItem("agentpop-kit-route");
+  const [view, setView] = React.useState(saved.page ? saved : { page: legacy || "sandboxes", param: null });
+  const go = (page, param) => {
+    setView({ page, param: param || null });
+    try { localStorage.setItem("agentpop-kit-view", JSON.stringify({ page, param: page === "sandbox" && param ? { id: param.id } : null })); } catch (e) {}
+  };
+  window.AGENTPOP_DESIGNNav = go;
+  const p = view.param || {};
+  const k = view.page + JSON.stringify(p);
+  const screens = {
+    overview: <OverviewScreen />,
+    sandboxes: <SandboxesScreen key={k} param={p} />,
+    sandbox: <SandboxDetailScreen key={k} id={p.id} tab={p.tab} />,
+    agents: <AgentsScreen key={k} param={p} />,
+    connectors: <ConnectorsScreen />,
+    templates: <TemplatesScreen />,
+    networks: <NetworksScreen />,
+    storage: <StorageScreen />,
+    webhooks: <WebhooksScreen />,
+    audit: <AuditScreen />,
+    developer: <DeveloperScreen />,
+    settings: <SettingsScreen key={k} param={p} />,
+  };
+  return <Shell route={view.page === "sandbox" ? "sandboxes" : view.page} onRoute={go}>{screens[view.page] || screens.sandboxes}</Shell>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body></html>

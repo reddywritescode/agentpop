@@ -1,0 +1,29 @@
+{
+  "name": "agentpop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AgentPop — the control plane for cloud agents. Design system + product UI.",
+  "license": "Apache-2.0",
+  "homepage": "https://agentpop.cloud",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reddywritescode/agentpop.git"
+  },
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "storybook": "pnpm --filter @agentpop/ui storybook",
+    "build-storybook": "pnpm --filter @agentpop/ui build-storybook",
+    "dev": "pnpm --filter @agentpop/web dev",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "qa:product": "./scripts/verify-product.sh",
+    "qa:ui": "node scripts/ui-flow-audit.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}

@@ -1,0 +1,32 @@
+<!-- @dsCard group="Components" viewport="700x280" name="Badges & status" subtitle="Badge tones + the full lifecycle StatusBadge set" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;padding:16px;background:var(--surface-canvas)}#root{display:flex;flex-direction:column;gap:10px}.rw{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.cap{font:11px/16px var(--font-mono);color:var(--text-tertiary)}</style>
+</head><body><div id="root"></div>
+<script type="text/babel">
+const { Badge, StatusBadge, Icon } = window.AgentPopDesignSystem_47afa4;
+const sandbox = ["queued","provisioning","running","pausing","paused","resuming","deleting","deleted","failed"];
+const agent = ["deploying","stopped","active","inactive","healthy","degraded","error"];
+function Demo(){
+  return <React.Fragment>
+    <div className="rw">
+      <Badge>Neutral</Badge><Badge tone="accent">Accent</Badge><Badge tone="success">Success</Badge>
+      <Badge tone="warning">Warning</Badge><Badge tone="danger">Danger</Badge><Badge tone="info">Info</Badge>
+      <Badge tone="outline">Outline</Badge>
+      <Badge tone="outline" size="sm">v1.4.2</Badge>
+      <Badge tone="accent" size="sm" icon={<Icon name="key" size={12} />}>sandbox:write</Badge>
+    </div>
+    <span className="cap">sandbox lifecycle</span>
+    <div className="rw">{sandbox.map(s => <StatusBadge key={s} status={s} />)}</div>
+    <span className="cap">agents & health</span>
+    <div className="rw">{agent.map(s => <StatusBadge key={s} status={s} />)}</div>
+  </React.Fragment>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script></body></html>

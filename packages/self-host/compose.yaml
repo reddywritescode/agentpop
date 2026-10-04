@@ -1,0 +1,77 @@
+name: agentpop-hosted
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL}
+      ALPHA_USER: ${ALPHA_USER}
+      ALPHA_PASSWORD_HASH: ${ALPHA_PASSWORD_HASH}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+      - control-plane
+    restart: unless-stopped
+
+  web:
+    image: ${AGENTPOP_WEB_IMAGE}
+    depends_on:
+      - control-plane
+    restart: unless-stopped
+
+  connector-broker:
+    image: ${AGENTPOP_CONNECTOR_BROKER_IMAGE}
+    environment:
+      CONNECTOR_BROKER_ADDR: 0.0.0.0:7070
+      CONNECTOR_BROKER_STATE: /var/lib/agentpop/connector-broker/state.json
+      CONNECTOR_BROKER_TOKEN: ${CONNECTOR_BROKER_TOKEN}
+      COMPOSIO_API_KEY: ${COMPOSIO_API_KEY}
+    volumes:
+      - type: bind
+        source: ${AGENTPOP_STATE_ROOT:-/var/lib/agentpop}/connector-broker
+        target: /var/lib/agentpop/connector-broker
+    restart: unless-stopped
+
+  control-plane:
+    image: ${AGENTPOP_CONTROL_PLANE_IMAGE}
+    environment:
+      CONTROL_PLANE_ADDR: 0.0.0.0:8080
+      CONTROL_PLANE_MODE: hosted-alpha
+      CONTROL_PLANE_STATE: /var/lib/agentpop/control-plane/state.json
+      CONTROL_PLANE_API_KEY: ${CONTROL_PLANE_API_KEY}
+      CONTROL_PLANE_ENCRYPTION_KEY: ${CONTROL_PLANE_ENCRYPTION_KEY}
+      HOST_AGENT_URL: ${HOST_AGENT_URL}
+      HOST_AGENT_TOKEN: ${HOST_AGENT_TOKEN}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD_SHA256: ${ADMIN_PASSWORD_SHA256}
+      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET}
+      CUSTOMER_SESSION_SECRET: ${CUSTOMER_SESSION_SECRET}
+      CUSTOMER_ALLOWED_GITHUB_LOGINS: ${CUSTOMER_ALLOWED_GITHUB_LOGINS}
+      CUSTOMER_COOKIE_DOMAIN: agentpop.cloud
+      GITHUB_OAUTH_CLIENT_ID: ${GITHUB_OAUTH_CLIENT_ID}
+      GITHUB_OAUTH_CLIENT_SECRET: ${GITHUB_OAUTH_CLIENT_SECRET}
+      PUBLIC_API_URL: https://api.agentpop.cloud
+      PUBLIC_WEB_URL: https://app.agentpop.cloud
+      PUBLIC_PREVIEW_BASE_URL: https://preview.agentpop.cloud
+      ALLOWED_ORIGINS: https://agentpop.cloud,https://www.agentpop.cloud,https://app.agentpop.cloud,https://admin.agentpop.cloud
+      CONNECTOR_BROKER_URL: http://connector-broker:7070
+      CONNECTOR_BROKER_TOKEN: ${CONNECTOR_BROKER_TOKEN}
+      IMAGE_GENERATOR_API_URL: ${IMAGE_GENERATOR_API_URL}
+      IMAGE_GENERATOR_API_KEY: ${IMAGE_GENERATOR_API_KEY}
+      IMAGE_GENERATOR_MODEL: ${IMAGE_GENERATOR_MODEL}
+    volumes:
+      - type: bind
+        source: ${AGENTPOP_STATE_ROOT:-/var/lib/agentpop}/control-plane
+        target: /var/lib/agentpop/control-plane
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+storybook-static/
+.next/
+out/
+
+# design-sync working dirs & bundle output
+.ds-sync/
+ds-bundle/
+.ds-build-meta.json
+.sync-diff.json
+
+# logs & os
+*.log
+.DS_Store
+
+# env
+.env
+.env.local
+
+# local runtime state and credentials
+.local/
+
+# Go build outputs
+bin/
+coverage.out
+
+# Python
+__pycache__/
+*.pyc

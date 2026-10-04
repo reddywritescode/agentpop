@@ -1,0 +1,19 @@
+{
+  "name": "@agentpop/connector-broker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "typecheck": "node --check src/server.mjs",
+    "build": "node --check src/server.mjs",
+    "lint": "node --check src/server.mjs"
+  },
+  "dependencies": {
+    "@composio/core": "0.12.0"
+  }
+}

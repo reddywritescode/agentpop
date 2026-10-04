@@ -1,0 +1,14 @@
+<!-- @dsCard group="Colors" viewport="700x240" name="Status tones" subtitle="fg / bg / border / solid — never color alone" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="card.css"><style>
+.trow{display:grid;grid-template-columns:70px 1fr 1fr 56px;gap:8px;align-items:center;margin-bottom:8px}
+.pill{border-radius:var(--radius-pill);border:1px solid;font-size:12px;font-weight:500;padding:3px 10px;display:inline-block}
+.solid{height:28px;border-radius:var(--radius-sm)}
+</style></head>
+<body>
+<div class="trow"><span class="lbl">success</span><span class="pill" style="background:var(--success-bg);color:var(--success-fg);border-color:var(--success-border)">Running</span><span class="tok">--success-fg/bg/border</span><div class="solid" style="background:var(--success-solid)"></div></div>
+<div class="trow"><span class="lbl">warning</span><span class="pill" style="background:var(--warning-bg);color:var(--warning-fg);border-color:var(--warning-border)">Paused</span><span class="tok">--warning-fg/bg/border</span><div class="solid" style="background:var(--warning-solid)"></div></div>
+<div class="trow"><span class="lbl">danger</span><span class="pill" style="background:var(--danger-bg);color:var(--danger-fg);border-color:var(--danger-border)">Failed</span><span class="tok">--danger-fg/bg/border</span><div class="solid" style="background:var(--danger-solid)"></div></div>
+<div class="trow"><span class="lbl">info</span><span class="pill" style="background:var(--info-bg);color:var(--info-fg);border-color:var(--info-border)">Provisioning</span><span class="tok">--info-fg/bg/border</span><div class="solid" style="background:var(--info-solid)"></div></div>
+<div class="trow" style="margin-bottom:0"><span class="lbl">neutral</span><span class="pill" style="background:var(--neutral-bg);color:var(--neutral-fg);border-color:var(--neutral-border)">Queued</span><span class="tok">--neutral-fg/bg/border</span><div class="solid" style="background:var(--neutral-solid)"></div></div>
+</body></html>

@@ -1,0 +1,77 @@
+openapi: 3.1.0
+info:
+  title: AgentPop host-agent API
+  version: 0.1.0
+  description: Private control-plane-to-data-plane API. Never expose this listener to customer networks.
+servers:
+  - url: http://127.0.0.1:9090
+security:
+  - hostToken: []
+paths:
+  /v1/runtime/sandboxes:
+    post:
+      operationId: createRuntimeSandbox
+      description: Creates a Docker development container or a Firecracker microVM. The secrets object is write-only and must not be logged.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RuntimeCreateRequest"
+      responses:
+        "201":
+          description: Runtime sandbox created.
+  /v1/runtime/sandboxes/{id}/secrets:
+    parameters:
+      - $ref: "#/components/parameters/SandboxId"
+    put:
+      operationId: setRuntimeSecrets
+      description: Replaces the root-readable write-only secret environment profile inside one running guest.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [secrets]
+              properties:
+                secrets:
+                  type: object
+                  maxProperties: 64
+                  additionalProperties: { type: string }
+      responses:
+        "204":
+          description: Guest secret profile replaced.
+        "409":
+          description: Runtime is not running or could not accept the update.
+components:
+  securitySchemes:
+    hostToken:
+      type: http
+      scheme: bearer
+      bearerFormat: AgentPopHostToken
+  parameters:
+    SandboxId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+  schemas:
+    RuntimeCreateRequest:
+      type: object
+      required: [id, name, image, vcpu, memoryMb, diskGb]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        image: { type: string }
+        vcpu: { type: number }
+        memoryMb: { type: integer }
+        diskGb: { type: integer }
+        environment:
+          type: object
+          additionalProperties: { type: string }
+        secrets:
+          type: object
+          description: Write-only. Consumed during provisioning and omitted from runtime state.
+          maxProperties: 64
+          additionalProperties: { type: string }
